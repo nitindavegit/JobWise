@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Response, status, HTTPException
+from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.orm import Session
 
 from .. import oauth2
@@ -16,9 +16,7 @@ router = APIRouter(
 # update Employer's profile
 @router.patch("/update-profile",status_code=status.HTTP_201_CREATED,response_model=schemas.EmployerProfileResponse)
 async def update_employer_profile(profile : schemas.EmployerProfileChange, db: Session = Depends(get_db), current_user: user_models.User = Depends(oauth2.get_current_user)):
-    # Get the full user object from database
-    user = db.query(user_models.User).filter(user_models.User.user_id == current_user.user_id).first()
-    if user.user_type != "employer":
+    if current_user.user_type != "employer":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only employers can update this profile.")
       # Check if employer profile already exists
     existing_profile = db.query(employer_models.Employer).filter(employer_models.Employer.user_id == current_user.user_id).first()
@@ -39,13 +37,12 @@ async def update_employer_profile(profile : schemas.EmployerProfileChange, db: S
         db.refresh(new_profile)
         result_profile = new_profile
         # Update profile_completed in User table
-        user_query = db.query(user_models.User).filter(user_models.User.user_id == current_user.user_id)
-        user_query.update({"profile_completed": True}, synchronize_session=False)
+        current_user.profile_completed = True
         db.commit()
     return {
-        "user_type": user.user_type,
-        "user_name": user.user_name,
-        "user_email": user.user_email,
+        "user_type": current_user.user_type,
+        "user_name": current_user.user_name,
+        "user_email": current_user.user_email,
         "company_name": result_profile.company_name,
         "company_description": result_profile.company_description
     }
@@ -55,17 +52,15 @@ async def update_employer_profile(profile : schemas.EmployerProfileChange, db: S
 #  get Employer's profile
 @router.get("/my-profile",response_model=schemas.EmployerProfileResponse)
 async def get_employer_profile(db: Session = Depends(get_db), current_user: user_models.User = Depends(oauth2.get_current_user)):
-    # Get the full user object from database
-    user = db.query(user_models.User).filter(user_models.User.user_id == current_user.user_id).first()
-    if user.user_type != "employer":
+    if current_user.user_type != "employer":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only employers can see this profile.")
     profile = db.query(employer_models.Employer).filter(employer_models.Employer.user_id == current_user.user_id).first()
     if profile == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"Profile not found")
     return {
-        "user_type": user.user_type,
-        "user_name": user.user_name,
-        "user_email": user.user_email,
+        "user_type": current_user.user_type,
+        "user_name": current_user.user_name,
+        "user_email": current_user.user_email,
         "company_name": profile.company_name,
         "company_description": profile.company_description
     }
