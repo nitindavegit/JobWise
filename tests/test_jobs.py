@@ -1,3 +1,6 @@
+from app.db.models import candidate, employer
+
+
 def create_user(client, user_name, user_email, user_type):
     payload = {
         "user_name": user_name,
@@ -72,3 +75,56 @@ def test_candidate_cannot_create_job(client):
         headers=headers,
     )
     assert response.status_code == 403
+    
+
+def test_recommend_jobs(client):
+    # create a candidate with resume
+    candidate = create_user(client, "candidate_rec", "candidate_rec@example.com", "candidate")
+    headers = login_headers(client, candidate["user_name"])
+    
+    # update candidate profile with resume text
+    profile_response = client.patch(
+        "/candidate/update-profile",
+        json={"resume_text" : "Python FastAPI SQL machine learning data science"},
+        headers = headers,
+    )
+    assert profile_response.status_code == 201
+    
+    # create employer and job
+    employer = create_user(client, "employer_rec", "employer_rec@example.com", "employer")
+    employer_headers = login_headers(client, employer["user_name"])
+    
+    client.patch(
+        "/employer/update-profile",
+        json={"company_name": "Tech Corp", "company_description": "AI company"},
+        headers=employer_headers,
+    )
+    
+    # create a matching job
+    job_response = client.post(
+        "/job/create-job",
+        json={
+            "job_title": "Data Scientist",
+            "job_description": "Work with Python and machine learning",
+            "job_location": "Remote",
+            "skills_required": ["Python", "Machine Learning", "SQL"],
+            "salary_range": "15-20 LPA",
+            "job_type": "Full-time",
+            
+        },
+        headers=employer_headers,
+    )
+    assert job_response.status_code == 201
+    
+    # Get Recommendations
+    rec_response = client.get(
+        "/candidate/recommend-jobs",
+        headers=headers,
+    )
+    assert rec_response.status_code == 200
+    recommendations = rec_response.json()
+    
+    # Verify we got recommendations with match scores
+    assert len(recommendations) > 0
+    assert "match_score" in recommendations[0]
+    assert recommendations[0]["match_score"] > 0

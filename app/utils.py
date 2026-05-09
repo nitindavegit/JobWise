@@ -16,6 +16,8 @@ from typing import List
 from app.db.models import job as job_models
 from app.db.models import candidate as candidate_models
 from app import schemas
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 def normalize_text(text: str) -> set:
     """Converts text to lowercase and splits into unique words."""
@@ -48,6 +50,34 @@ def calculate_match_score(resume_text: str, job_skills: List[str]) -> int:
         
     return int((match_count / len(job_skills)) * 100)
 
+def calculate_tfidf_match_score(resume_text: str, job_description: str, job_skills: List[str]) -> int:
+    """
+    Calculates a match score using TF-IDF vectorization and cosine similarity.
+    This is more sophisticated than simple word matching.
+    """
+    
+    if not resume_text or not job_description:
+        return 0
+    
+     # Combine job description and skills for better matching
+    job_text = job_description + " " + " ".join(job_skills)
+    
+    # create TF-IDF vectorizer
+    vectorizer = TfidfVectorizer(stop_words='english')
+    
+    try:
+        tfidf_matrix = vectorizer.fit_transform([resume_text, job_text])
+        similarity = cosine_similarity(tfidf_matrix[0:1] , tfidf_matrix[1: 2])[0][0]
+        
+        return int(similarity * 100)
+    
+    except Exception as e:
+        # Fallback to simple matching if TF-IDF fails
+        return calculate_match_score(resume_text, job_skills)
+    
+     
+    
+
 def match_candidate_to_job(candidate_id: int, db: Session, limit: int = 10):
     # Fetch candidate's profile
     candidate = db.query(candidate_models.Candidate).filter(candidate_models.Candidate.candidate_id == candidate_id).first()
@@ -59,7 +89,7 @@ def match_candidate_to_job(candidate_id: int, db: Session, limit: int = 10):
     
     scored_jobs = []
     for job in jobs:
-        score = calculate_match_score(candidate.resume_text, job.skills_required)
+        score = calculate_tfidf_match_score(candidate.resume_text, job.job_description, job.skills_required)
         if score > 0: # Only return jobs with at least some match
             # Extend JobResponse with score - strictly we should define a new schema for this
             # For now, we'll return a dict or similar
