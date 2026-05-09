@@ -1,5 +1,6 @@
 import sys
 import os
+from datetime import datetime, UTC
 # Ensure app module can be found
 sys.path.append(os.getcwd())
 
@@ -23,7 +24,7 @@ def seed():
         
         if not employer:
             employer = user_models.User(
-                user_name="TechCorp Recruiter",
+                user_name="techcorp_recruiter",
                 user_email=employer_email,
                 user_password=hash("password123"),
                 user_type="employer",
@@ -34,10 +35,11 @@ def seed():
             db.refresh(employer)
             print("Created Employer User.")
         else:
-            # Update password just in case
+            # Update password and username just in case
             employer.user_password = hash("password123")
+            employer.user_name = "techcorp_recruiter"
             db.commit()
-            print("Updated Employer Password.")
+            print("Updated Employer Password and Username.")
 
         employer_profile = db.query(employer_models.Employer).filter(employer_models.Employer.user_id == employer.user_id).first()
         if not employer_profile:
@@ -56,7 +58,7 @@ def seed():
         
         if not candidate:
             candidate = user_models.User(
-                user_name="John Developer",
+                user_name="johndeveloper",
                 user_email=candidate_email,
                 user_password=hash("password123"),
                 user_type="candidate",
@@ -68,8 +70,9 @@ def seed():
             print("Created Candidate User.")
         else:
             candidate.user_password = hash("password123")
+            candidate.user_name = "johndeveloper"
             db.commit()
-            print("Updated Candidate Password.")
+            print("Updated Candidate Password and Username.")
 
         candidate_profile = db.query(candidate_models.Candidate).filter(candidate_models.Candidate.user_id == candidate.user_id).first()
         if not candidate_profile:
@@ -103,7 +106,9 @@ def seed():
                     skills_required=j["skills"],
                     salary_range=j["salary"],
                     job_type="Full-time",
-                    job_status=schemas.JobStatusEnum.open
+                    job_status=schemas.JobStatusEnum.open,
+                    created_at = datetime.now(UTC),
+                    updated_at = datetime.now(UTC)
                 )
                 db.add(job)
         
