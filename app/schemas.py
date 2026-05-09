@@ -116,14 +116,14 @@ class JobStatusChange(BaseModel):
     
 # ========== Profile Schemas ==========
 
-# Candidate Profile Response 
+# Candidate Profile Response
 class CandidateProfileResponse(BaseModel):
     user_type : UserType
     candidate_id : int
     user_name : str
     user_email : EmailStr
-    resume_text : str
-    
+    resume_text : Optional[str] = None
+
     class Config:
         from_attributes = True
 
