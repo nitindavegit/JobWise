@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import user_router,candidate_router,employer_router,auth
+from .routers import user_router,candidate_router,employer_router,job_router,auth
 
 app = FastAPI()
 
@@ -10,4 +10,5 @@ def demo():
 app.include_router(user_router.router)
 app.include_router(candidate_router.router)
 app.include_router(employer_router.router)
+app.include_router(job_router.router)
 app.include_router(auth.router)
