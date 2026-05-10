@@ -1,7 +1,12 @@
 from fastapi import FastAPI
 from .routers import user_router,candidate_router,employer_router,job_router,auth
+from .validator import validation_on_startup
 
 app = FastAPI()
+
+@app.on_event("startup")
+async def startup_event():
+    validation_on_startup()
 
 @app.get("/")
 def demo():
