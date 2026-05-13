@@ -262,3 +262,13 @@ body {
 .section-gradient {
   background: linear-gradient(180deg, #F4F0FF 0%, #FFE8E0 100%);
 }
+
+/* Marquee Animation */
+@keyframes marquee-scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee-scroll {
+  animation: marquee-scroll 28s linear infinite;
+}
