@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 :root {
   /* Primary Surfaces */
   --jw-bg: #F4F0FF;
@@ -246,4 +248,17 @@ body {
 
 .animate-fade-up {
   animation: fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Section Separation */
+.section-white {
+  background: white;
+}
+
+.section-light {
+  background: #FAFAFA;
+}
+
+.section-gradient {
+  background: linear-gradient(180deg, #F4F0FF 0%, #FFE8E0 100%);
 }
