@@ -8,6 +8,8 @@ import CandidateOnboarding from './pages/CandidateOnboarding';
 import EmployerOnboarding from './pages/EmployerOnboarding';
 import CandidateDashboard from './pages/CandidateDashboard';
 import EmployerDashboard from './pages/EmployerDashboard';
+import CandidateProfile from './pages/CandidateProfile';
+import EmployerProfile from './pages/EmployerProfile';
 import JobDetail from './pages/JobDetail';
 
 function App() {
@@ -31,6 +33,10 @@ function App() {
             {/* Dashboards — requires login + profile + correct role */}
             <Route path="/dashboard" element={<RequireProfile role="candidate"><CandidateDashboard /></RequireProfile>} />
             <Route path="/employer" element={<RequireProfile role="employer"><EmployerDashboard /></RequireProfile>} />
+
+            {/* Profile edit */}
+            <Route path="/profile/candidate" element={<RequireProfile role="candidate"><CandidateProfile /></RequireProfile>} />
+            <Route path="/profile/employer" element={<RequireProfile role="employer"><EmployerProfile /></RequireProfile>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>
