@@ -119,11 +119,44 @@ class JobDetailResponse(JobBase):
     
     class Config:
         from_attributes = True
+
+
+# ========== Application Schemas ==========
+
+class ApplicationStatusEnum(str, Enum):
+    applied = "applied"
+    reviewing = "reviewing"
+    accepted = "accepted"
+    rejected = "rejected"
+
+# Application response
+class ApplicationResponse(BaseModel):
+    application_id : int
+    candidate_id : int
+    job_id : int
+    status : ApplicationStatusEnum
+    applied_at : datetime
+    updated_at : datetime
     
-    
-    
-    
-    
+    class Config:
+        from_attributes = True
+
+# Application with job details (for candidate's "My Applications" view)
+class ApplicationWithJobResponse(ApplicationResponse):
+    job_title : Optional[str] = None
+    company_name : Optional[str] = None
+
+# Application with candidate details (for employer's "Applicants" view)
+class ApplicationWithCandidateResponse(ApplicationResponse):
+    candidate_name : Optional[str] = None
+    candidate_email : Optional[str] = None
+    match_score : Optional[float] = None
+
+# Employer changes application status
+class ApplicationStatusChange(BaseModel):
+    status : Literal["reviewing", "accepted", "rejected"]
+
+
 # ========== Profile Schemas ==========
 
 # Candidate Profile Response
