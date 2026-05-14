@@ -7,6 +7,7 @@ import CandidateOnboarding from './pages/CandidateOnboarding';
 import EmployerOnboarding from './pages/EmployerOnboarding';
 import CandidateDashboard from './pages/CandidateDashboard';
 import EmployerDashboard from './pages/EmployerDashboard';
+import JobDetail from './pages/JobDetail';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Routes>
           {/* Public */}
           <Route path="/" element={<Landing />} />
+          <Route path="/job/:jobId" element={<JobDetail />} />
 
           {/* Guest only — redirect if already logged in */}
           <Route path="/login" element={<GuestOnly><Auth /></GuestOnly>} />
