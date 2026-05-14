@@ -32,8 +32,15 @@ const Auth = ({ isSignup = false }) => {
         userData = await signup(username, email, password, userType);
       }
 
-      // Route based on user type
-      if (userData.user_type === 'employer') {
+      // Route based on user type + profile completion
+      if (!userData.profile_completed) {
+        // Onboarding required
+        if (userData.user_type === 'employer') {
+          navigate('/onboarding/employer');
+        } else {
+          navigate('/onboarding/candidate');
+        }
+      } else if (userData.user_type === 'employer') {
         navigate('/employer');
       } else {
         navigate('/dashboard');

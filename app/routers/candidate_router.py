@@ -34,15 +34,18 @@ async def update_candidate_profile(profile : schemas.CandidateProfileChange, db:
         db.commit()
         db.refresh(new_profile)
         result_profile = new_profile
-        # Update profile_completed in User table
-        current_user.profile_completed = True
-        db.commit()
+    
+    # Always mark profile as completed after update
+    current_user.profile_completed = True
+    db.commit()
+    
     return {
         "user_type": current_user.user_type,
         "candidate_id": result_profile.candidate_id,
         "user_name": current_user.user_name,
         "user_email": current_user.user_email,
-        "resume_text": result_profile.resume_text
+        "resume_text": result_profile.resume_text,
+        "skills": result_profile.skills or []
     }
     
 
@@ -61,7 +64,8 @@ async def get_candidate_profile(db: Session = Depends(get_db), current_user: use
         "candidate_id": profile.candidate_id,
         "user_name": current_user.user_name,
         "user_email": current_user.user_email,
-        "resume_text": profile.resume_text
+        "resume_text": profile.resume_text,
+        "skills": profile.skills or []
     }
 
 # Upload Resume (PDF)
