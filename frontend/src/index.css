@@ -272,3 +272,8 @@ body {
 .animate-marquee-scroll {
   animation: marquee-scroll 28s linear infinite;
 }
+
+/* Spinner Animation */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
