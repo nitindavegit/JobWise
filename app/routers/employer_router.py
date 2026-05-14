@@ -36,9 +36,11 @@ async def update_employer_profile(profile : schemas.EmployerProfileChange, db: S
         db.commit()
         db.refresh(new_profile)
         result_profile = new_profile
-        # Update profile_completed in User table
-        current_user.profile_completed = True
-        db.commit()
+    
+    # Always mark profile as completed after update
+    current_user.profile_completed = True
+    db.commit()
+    
     return {
         "user_type": current_user.user_type,
         "user_name": current_user.user_name,
