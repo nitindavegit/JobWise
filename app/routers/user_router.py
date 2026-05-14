@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, Response, status, HTTPException
-from app import schemas, utils
+from app import schemas, utils, oauth2
 from app.db.models.user import User
 from app.db.models.candidate import Candidate
 from app.db.models.employer import Employer
@@ -9,6 +9,11 @@ router = APIRouter(
     prefix="/user",
     tags = ['User']
 )
+
+# get current authenticated user
+@router.get("/me", response_model=schemas.UserMeResponse)
+async def get_current_user(current_user: User = Depends(oauth2.get_current_user)):
+    return current_user
 
 # create a user
 @router.post("/",status_code=status.HTTP_201_CREATED,response_model=schemas.UserResponse)

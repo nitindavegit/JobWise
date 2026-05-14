@@ -155,6 +155,20 @@ class EmployerProfileChange(BaseModel):
 
 
 
+# ========== Current User Schema ==========
+
+# GET /user/me — returns identity after login
+class UserMeResponse(BaseModel):
+    user_id : int
+    user_name : str
+    user_email : EmailStr
+    user_type : UserType
+    profile_completed : bool
+
+    class Config:
+        from_attributes = True
+
+
 # ========== Token Schemas ==========
 class Token(BaseModel):
     access_token: str
