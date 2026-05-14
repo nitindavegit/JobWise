@@ -47,6 +47,7 @@ class UserResponse(UserBase):
 # shared Base
 class CandidateBase(BaseModel):
     resume_text : str
+    skills : Optional[List[str]] = []
     
 # for creating a candidate 
 class CandidateCreate(CandidateBase):
@@ -166,6 +167,7 @@ class CandidateProfileResponse(BaseModel):
     user_name : str
     user_email : EmailStr
     resume_text : Optional[str] = None
+    skills : Optional[List[str]] = []
 
     class Config:
         from_attributes = True
@@ -173,6 +175,7 @@ class CandidateProfileResponse(BaseModel):
 # Candidate profile changes
 class CandidateProfileChange(BaseModel):
     resume_text : Optional[str] = None
+    skills : Optional[List[str]] = None
     
 
 # Employer Profile Response
