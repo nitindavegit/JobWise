@@ -109,6 +109,16 @@ class JobResponse(JobBase):
 # changing job status
 class JobStatusChange(BaseModel):
     job_status : Literal[JobStatusEnum.open,JobStatusEnum.closed,JobStatusEnum.paused]
+
+# for detailed job view (include company name)
+class JobDetailResponse(JobBase):
+    job_id : int
+    company_id : int
+    job_status : JobStatusEnum
+    company_name : Optional[str] = None
+    
+    class Config:
+        from_attributes = True
     
     
     

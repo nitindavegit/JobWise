@@ -66,3 +66,20 @@ async def update_job_status(job_id: int, status_data: schemas.JobStatusChange, d
     db.commit()
     db.refresh(job_query)
     return job_query
+
+# Get a single job by ID
+@router.get("/{job_id}", response_model=schemas.JobDetailResponse)
+async def get_job_by_id(job_id: int, db: Session = Depends(get_db)):
+    job = db.query(job_models.Job).filter(job_models.Job.job_id == job_id).first()
+    if not job:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Job not found")
+    
+    # Get company name from employer
+    employer = db.query(employer_models.Employer).filter(
+        employer_models.Employer.employer_id == job.company_id
+    ).first()
+    
+    # Build response with company_name
+    job_data = schemas.JobDetailResponse.model_validate(job)
+    job_data.company_name = employer.company_name if employer else None
+    return job_data
