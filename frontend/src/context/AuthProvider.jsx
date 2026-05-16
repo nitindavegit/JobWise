@@ -13,11 +13,10 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(getStoredToken);
 
   const login = async (username, password) => {
-    const formData = new FormData();
-    formData.append('username', username);
-    formData.append('password', password);
-
-    const response = await apiClient.post('/login', formData);
+    const response = await apiClient.post('/login', {
+      user_name: username,
+      user_password: password,
+    });
     const { access_token } = response.data;
 
     // Save token BEFORE calling /user/me so the interceptor picks it up
@@ -51,8 +50,16 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('user');
   };
 
+  const updateUser = (data) => {
+    setUser((prev) => {
+      const updated = { ...prev, ...data };
+      localStorage.setItem('user', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
   return (
-    <AuthContext.Provider value={{ user, token, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, token, login, signup, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
