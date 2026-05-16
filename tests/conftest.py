@@ -5,6 +5,9 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 # Set config env vars before importing app modules.
 os.environ.setdefault("DATABASE_URL", "sqlite:///./test_jobwise.db")
 os.environ.setdefault("DATABASE_HOSTNAME", "localhost")
@@ -22,7 +25,7 @@ from app.db.models.user import User  # noqa: F401, E402
 from app.db.models.candidate import Candidate  # noqa: F401, E402
 from app.db.models.employer import Employer  # noqa: F401, E402
 from app.db.models.job import Job  # noqa: F401, E402
-
+from app.db.models.application import Application  # noqa: F401, E402
 
 SQLALCHEMY_DATABASE_URL = "sqlite:///./test_jobwise.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
