@@ -17,8 +17,8 @@ class Application(Base):
     candidate_id = Column(Integer, ForeignKey('candidates.candidate_id'), nullable=False)
     job_id = Column(Integer, ForeignKey('jobs.job_id'), nullable=False)
     status = Column(Enum(ApplicationStatus), default=ApplicationStatus.applied, nullable=False)
-    applied_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+    applied_at = Column(DateTime(timezone=True), server_default=func.now(), default=func.now(), nullable=False)
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), default=func.now(), onupdate=func.now(), nullable=False)
     
     # Prevent duplicate applications
     __table_args__ = (
