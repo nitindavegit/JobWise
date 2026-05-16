@@ -6,8 +6,11 @@ import {
   Building2, FileText, ArrowRight, CheckCircle,
 } from 'lucide-react';
 
+import { useAuth } from '../context/useAuth';
+
 const EmployerOnboarding = () => {
   const navigate = useNavigate();
+  const { updateUser } = useAuth();
 
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -29,10 +32,8 @@ const EmployerOnboarding = () => {
         company_description: companyDescription.trim(),
       });
 
-      // Update user in localStorage
-      const stored = JSON.parse(localStorage.getItem('user') || '{}');
-      stored.profile_completed = true;
-      localStorage.setItem('user', JSON.stringify(stored));
+      // Update user context
+      updateUser({ profile_completed: true });
 
       navigate('/employer');
     } catch (err) {
