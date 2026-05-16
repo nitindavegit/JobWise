@@ -113,7 +113,9 @@ async def upload_resume(file: UploadFile = File(...), db: Session = Depends(get_
     return {"message": "Resume uploaded and processed successfully", "extracted_text_preview": text[:200] + "..."}
 
 # Recommend Jobs
-@router.get("/recommend-jobs")
+from typing import List
+
+@router.get("/recommend-jobs", response_model=List[schemas.JobRecommendationResponse])
 async def recommend_jobs(limit: int = 10, db: Session = Depends(get_db), current_user: user_models.User = Depends(oauth2.get_current_user)):
     from app import utils # import here to avoid circular dependency if any, or just convenience
     
