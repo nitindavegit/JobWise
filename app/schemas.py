@@ -106,6 +106,9 @@ class JobResponse(JobBase):
     
     class Config:
         from_attributes = True
+
+class JobRecommendationResponse(JobResponse):
+    match_score : int
         
 # changing job status
 class JobStatusChange(BaseModel):
@@ -155,7 +158,7 @@ class ApplicationWithCandidateResponse(ApplicationResponse):
 
 # Employer changes application status
 class ApplicationStatusChange(BaseModel):
-    status : Literal["reviewing", "accepted", "rejected"]
+    status : ApplicationStatusEnum
 
 
 # ========== Profile Schemas ==========
@@ -183,8 +186,8 @@ class EmployerProfileResponse(BaseModel):
     user_type : UserType
     user_name : str
     user_email : EmailStr
-    company_name : str
-    company_description : str
+    company_name : Optional[str] = None
+    company_description : Optional[str] = None
     
     class Config:
         from_attributes = True
