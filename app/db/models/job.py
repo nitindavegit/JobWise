@@ -14,8 +14,8 @@ class Job(Base):
     skills_required = Column(JSON,nullable=False)
     salary_range = Column(String,nullable=False)
     
-    created_at = Column(DateTime(timezone=True),server_default=func.now(),nullable=False)
-    updated_at = Column(DateTime(timezone=True),server_default=func.now(),onupdate=func.now(),nullable=False)
+    created_at = Column(DateTime(timezone=True),server_default=func.now(),default=func.now(),nullable=False)
+    updated_at = Column(DateTime(timezone=True),server_default=func.now(),default=func.now(),onupdate=func.now(),nullable=False)
     
     employer = relationship("Employer",back_populates="jobs")
     job_status = Column(Enum(JobStatusEnum),default=JobStatusEnum.open)
