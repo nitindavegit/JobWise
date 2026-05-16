@@ -11,6 +11,7 @@ from app.db.models.user import User
 from app.db.models.candidate import Candidate
 from app.db.models.job import Job
 from app.db.models.employer import Employer
+from app.db.models.application import Application
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
