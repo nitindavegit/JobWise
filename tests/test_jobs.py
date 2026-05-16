@@ -14,7 +14,7 @@ def create_user(client, user_name, user_email, user_type):
 
 
 def login_headers(client, username):
-    response = client.post("/login", data={"username": username, "password": "password123"})
+    response = client.post("/login", json={"user_name": username, "user_password": "password123"})
     assert response.status_code == 200
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
