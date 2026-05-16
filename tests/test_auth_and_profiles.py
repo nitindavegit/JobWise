@@ -23,7 +23,7 @@ def create_employer_user(client):
 
 
 def login_and_get_headers(client, username, password):
-    response = client.post("/login", data={"username": username, "password": password})
+    response = client.post("/login", json={"user_name": username, "user_password": password})
     assert response.status_code == 200
     token = response.json()["access_token"]
     return {"Authorization": f"Bearer {token}"}
