@@ -27,22 +27,22 @@ def normalize_text(text: str) -> set:
     text = re.sub(r'[^\w\s]', '', text.lower())
     return set(text.split())
 
-def calculate_match_score(resume_text: str, job_skills: List[str]) -> int:
+def calculate_match_score(candidate_text: str, job_skills: List[str]) -> int:
     """
     Calculates a match score (0-100) based on skill overlap.
     """
-    if not resume_text or not job_skills:
+    if not candidate_text or not job_skills:
         return 0
     
-    resume_words = normalize_text(resume_text)
+    candidate_words = normalize_text(candidate_text)
     # Also check for multi-word skills in the raw lowercased text
-    resume_text_lower = resume_text.lower()
+    candidate_text_lower = candidate_text.lower()
     
     match_count = 0
     for skill in job_skills:
         skill_lower = skill.lower()
         # Check if skill exists in set of words OR as a substring (for multi-word skills like "machine learning")
-        if skill_lower in resume_words or skill_lower in resume_text_lower:
+        if skill_lower in candidate_words or skill_lower in candidate_text_lower:
             match_count += 1
             
     if len(job_skills) == 0:
@@ -50,32 +50,29 @@ def calculate_match_score(resume_text: str, job_skills: List[str]) -> int:
         
     return int((match_count / len(job_skills)) * 100)
 
-def calculate_tfidf_match_score(resume_text: str, job_description: str, job_skills: List[str]) -> int:
+def calculate_tfidf_match_score(candidate_text: str, job_description: str, job_skills: List[str]) -> int:
     """
     Calculates a match score using TF-IDF vectorization and cosine similarity.
     This is more sophisticated than simple word matching.
     """
-    
-    if not resume_text or not job_description:
+    if not candidate_text or not job_description:
         return 0
     
-     # Combine job description and skills for better matching
+    # Combine job description and skills for better matching
     job_text = job_description + " " + " ".join(job_skills)
     
     # create TF-IDF vectorizer
     vectorizer = TfidfVectorizer(stop_words='english')
     
     try:
-        tfidf_matrix = vectorizer.fit_transform([resume_text, job_text])
+        tfidf_matrix = vectorizer.fit_transform([candidate_text, job_text])
         similarity = cosine_similarity(tfidf_matrix[0:1] , tfidf_matrix[1: 2])[0][0]
         
         return int(similarity * 100)
     
     except Exception as e:
         # Fallback to simple matching if TF-IDF fails
-        return calculate_match_score(resume_text, job_skills)
-    
-     
+        return calculate_match_score(candidate_text, job_skills)
     
 
 def match_candidate_to_job(candidate_id: int, db: Session, limit: int = 10):
@@ -84,15 +81,22 @@ def match_candidate_to_job(candidate_id: int, db: Session, limit: int = 10):
     if not candidate:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate not found")
     
+    # Combine candidate's resume text and manually entered skills
+    candidate_text_parts = []
+    if candidate.resume_text:
+        candidate_text_parts.append(candidate.resume_text)
+    if candidate.skills:
+        candidate_text_parts.append(" ".join(candidate.skills))
+        
+    candidate_combined_text = " ".join(candidate_text_parts).strip()
+    
     # Fetch all open jobs
     jobs = db.query(job_models.Job).filter(job_models.Job.job_status == schemas.JobStatusEnum.open).all()
     
     scored_jobs = []
     for job in jobs:
-        score = calculate_tfidf_match_score(candidate.resume_text, job.job_description, job.skills_required)
+        score = calculate_tfidf_match_score(candidate_combined_text, job.job_description, job.skills_required)
         if score > 0: # Only return jobs with at least some match
-            # Extend JobResponse with score - strictly we should define a new schema for this
-            # For now, we'll return a dict or similar
             job_data = schemas.JobResponse.model_validate(job).model_dump()
             job_data['match_score'] = score
             scored_jobs.append(job_data)
