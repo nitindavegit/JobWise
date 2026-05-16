@@ -9,7 +9,7 @@ import {
 
 const CandidateOnboarding = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, updateUser } = useAuth();
 
   const [step, setStep] = useState(1); // 1 = Resume, 2 = Skills
   const [loading, setLoading] = useState(false);
@@ -84,10 +84,8 @@ const CandidateOnboarding = () => {
         skills: skills,
       });
 
-      // Update user in localStorage with profile_completed = true
-      const stored = JSON.parse(localStorage.getItem('user') || '{}');
-      stored.profile_completed = true;
-      localStorage.setItem('user', JSON.stringify(stored));
+      // Update user context state
+      updateUser({ profile_completed: true });
 
       navigate('/dashboard');
     } catch (err) {
