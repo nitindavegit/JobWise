@@ -128,7 +128,9 @@ const CandidateDashboard = () => {
 
     return (
         <div className="pro-dashboard" style={{ minHeight: '100vh', backgroundColor: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)' }}>
+        <div className={sidebarOpen ? 'jw-hide-on-mobile' : ''}>
             <Navbar />
+        </div>
 
             {/* ── Error Toast ── */}
             <AnimatePresence>

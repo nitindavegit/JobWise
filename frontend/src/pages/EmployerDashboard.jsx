@@ -142,7 +142,9 @@ const EmployerDashboard = () => {
 
   return (
     <div className="pro-dashboard" style={{ minHeight: '100vh', backgroundColor: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)' }}>
-      <Navbar />
+      <div className={sidebarOpen ? 'jw-hide-on-mobile' : ''}>
+        <Navbar />
+      </div>
 
       <div className="flex flex-col md:flex-row min-h-screen pt-[64px]">
         {/* Mobile Menu Toggle */}

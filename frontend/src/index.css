@@ -642,6 +642,11 @@ button, input, textarea, select {
 
   /* Nav pill links */
   .jw-nav-pill-link { font-size: 0.85rem; padding: 5px 10px; }
+
+  /* Hide navbar when dashboard sidebar is open */
+  .jw-hide-on-mobile {
+    display: none !important;
+  }
   /* Auth page outer container */
   .jw-auth-page {
     padding: 24px 16px !important;
