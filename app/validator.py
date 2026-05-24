@@ -18,11 +18,6 @@ def validate_environment() -> bool:
     # Required environment variables
     required_vars = {
         "DATABASE_URL",
-        "DATABASE_HOSTNAME",
-        "DATABASE_PORT",
-        "DATABASE_PASSWORD",
-        "DATABASE_NAME",
-        "DATABASE_USERNAME",
         "SECRET_KEY",
         "ALGORITHM",
         "ACCESS_TOKEN_EXPIRE_MINUTES"
