@@ -105,22 +105,3 @@ What started as a learning exercise is now a fully functional, sleek SaaS hiring
    *(The frontend runs on `http://localhost:5173`)*
 
 ---
-
-## Production Deployment & Mock Data Seeding
-
-When deploying JobWise to a live production environment (e.g., Netlify + Render + Supabase), the PostgreSQL database will initialize empty. 
-
-To easily populate the live environment for demonstrations or portfolio showcases, follow this automated Live Seeder strategy:
-
-1. **Sign Up Live:** Navigate to your hosted website (`https://jobwiseplatform.netlify.app/`) and manually register the two demo users:
-   - **Employer:** Username: `jhonnykhanna`, Email: `jhonnykhanna@gmail.com`, Password: `Jhonnykhanna1@gmail.com`
-   - **Candidate:** Username: `sofiasharma`, Email: `sofiasharma@gmail.com`, Password: `Sofiasharma1@gmail.com`
-   *(This ensures your production server securely bcrypts the passwords and generates valid JWT tokens natively).*
-
-2. **Execute the Seeder Script:** Open your production database console (e.g., Supabase SQL Editor). Copy the entire contents of the `live_seeder.sql` file located in the root of this repository, paste it into the editor, and execute it.
-
-3. **Validation:** The SQL script uses CTEs (Common Table Expressions) to dynamically locate the accounts by their emails, inject company profiles, generate professional job listings, and automatically simulate applications between them with precise Match Scores.
-
----
-
-*Engineered with precision for the future of hiring.*
