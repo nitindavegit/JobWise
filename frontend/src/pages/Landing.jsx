@@ -98,7 +98,7 @@ const Landing = () => (
       />
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '0 40px' }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
 
           {/* Left */}
           <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }} style={{ position: 'relative', zIndex: 10 }}>
@@ -299,9 +299,9 @@ const Landing = () => (
         </FadeSection>
 
         {/* Bento Row 1: Large card (2-col) + 2 stacked cards */}
-        <FadeSection style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '20px', marginBottom: '20px' }}>
+        <FadeSection className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-5">
           {/* Card 1: Semantic Resume Parsing - large */}
-          <motion.div variants={fadeUp} style={{ background: '#FAF9FB', borderRadius: '24px', padding: '40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '320px', border: '1px solid rgba(26,11,46,0.05)' }}>
+          <motion.div variants={fadeUp} className="lg:col-span-2" style={{ background: '#FAF9FB', borderRadius: '24px', padding: '40px 36px', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', minHeight: '320px', border: '1px solid rgba(26,11,46,0.05)' }}>
             <div>
               <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FFE8E0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '20px' }}>
                 <Crosshair weight="duotone" size={22} color="#FF6B6B" />
@@ -336,7 +336,7 @@ const Landing = () => (
         </FadeSection>
 
         {/* Bento Row 2: 3 equal cards, last one dark */}
-        <FadeSection style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '20px' }}>
+        <FadeSection className="grid grid-cols-1 md:grid-cols-3 gap-5">
           <motion.div variants={fadeUp} style={{ background: '#FAF9FB', borderRadius: '24px', padding: '32px 28px', border: '1px solid rgba(26,11,46,0.05)' }}>
             <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: '#FFE8E0', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
               <CloudArrowUp weight="duotone" size={22} color="#FF6B6B" />
@@ -378,9 +378,10 @@ const Landing = () => (
           </motion.h2>
         </FadeSection>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '48px', position: 'relative' }}>
-          {/* Animated connector line */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 relative">
+          {/* Animated connector line (Hidden on mobile) */}
           <motion.div
+            className="hidden md:block"
             initial={{ scaleX: 0 }}
             whileInView={{ scaleX: 1 }}
             viewport={{ once: true, margin: '-100px' }}
@@ -421,7 +422,7 @@ const Landing = () => (
       <div style={{ position: 'absolute', bottom: '40px', left: '40px', width: '380px', height: '380px', borderRadius: '50%', background: '#7C3AED', opacity: 0.06, filter: 'blur(80px)', pointerEvents: 'none' }} />
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', position: 'relative', zIndex: 1 }}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '80px', alignItems: 'center' }}>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-center">
           <FadeSection>
             <motion.div variants={fadeLeft}>
               <Chip variant="coral" style={{ marginBottom: '24px', display: 'inline-flex' }}>For Employers</Chip>
@@ -443,7 +444,7 @@ const Landing = () => (
             </motion.div>
           </FadeSection>
 
-          <FadeSection style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <FadeSection className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {employerStats.map((s) => (
               <motion.div key={s.label} variants={fadeUp} whileHover={{ scale: 1.03 }} style={{ padding: '28px 24px', borderRadius: '20px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)', cursor: 'default' }}>
                 <s.icon size={20} color="var(--jw-coral)" style={{ marginBottom: '16px' }} />
@@ -468,7 +469,7 @@ const Landing = () => (
           </motion.h2>
         </FadeSection>
 
-        <FadeSection style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: '24px' }}>
+        <FadeSection className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t) => (
             <motion.div key={t.name} variants={fadeUp} className="glass-card" style={{ padding: '36px', borderRadius: '28px' }}>
               <div style={{ display: 'flex', gap: '4px', marginBottom: '20px' }}>

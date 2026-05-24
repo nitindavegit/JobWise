@@ -64,7 +64,7 @@ const Navbar = () => {
     // ── outer shell: fixed, inset from viewport edges ──
     // `flex justify-center` makes the pill sit dead-centre horizontally
     <nav
-      className="fixed top-0 left-0 right-0 z-60 pt-[20px] pb-[20px] flex justify-center"
+      className="fixed top-0 left-0 right-0 z-60 pt-[20px] pb-[20px] flex flex-col items-center"
       data-testid="navbar"
       aria-label="Primary navigation"
       style={{
@@ -81,7 +81,7 @@ const Navbar = () => {
           alignItems      : 'center',
           justifyContent  : 'space-between',
           gap             : '28px',
-          padding         : '18px 36px',
+          padding         : '14px 36px',
           borderRadius    : `${RADIUS}px`,
           background      : '#ffffff',
           boxShadow       : '0 4px 6px rgba(0, 0, 0, 0.05)',
@@ -131,6 +131,7 @@ const Navbar = () => {
               to="/signup"
               data-testid="navbar-getstarted-btn"
               style={{
+                display        : 'inline-block',
                 background     : CORAL,
                 color          : '#ffffff',
                 fontWeight     : 600,

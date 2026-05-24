@@ -101,14 +101,10 @@ const Auth = ({ isSignup = false }) => {
         </div>
 
         {/* Form Card */}
-        <div style={{
-          padding: '40px 36px',
-          borderRadius: '28px',
+        <div className="p-6 md:p-10 rounded-[28px] border border-white/60 shadow-[0_12px_40px_rgba(26,11,46,0.10)]" style={{
           background: 'rgba(255,255,255,0.75)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255,255,255,0.6)',
-          boxShadow: '0 12px 40px rgba(26,11,46,0.10)',
         }}>
 
           {/* Mode tabs */}

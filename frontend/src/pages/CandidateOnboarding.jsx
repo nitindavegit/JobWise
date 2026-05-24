@@ -182,11 +182,9 @@ const CandidateOnboarding = () => {
           <Link to="/"><Logo size="xl" /></Link>
         </div>
 
-        <div style={{
-          padding: '44px 40px', borderRadius: '28px',
+        <div className="p-6 md:p-10 rounded-[28px] border border-white/60 shadow-[0_16px_64px_rgba(26,11,46,0.10)]" style={{
           background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.6)',
-          boxShadow: '0 16px 64px rgba(26,11,46,0.10)',
+          WebkitBackdropFilter: 'blur(24px)'
         }}>
           {stepIndicator}
 

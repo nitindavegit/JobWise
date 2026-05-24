@@ -8,7 +8,7 @@ import {
     Briefcase, MapPin, Coins, Sparkle, Clock, Scroll,
     SignOut, Crown, RocketLaunch, SealCheck, XCircle,
     Eye, Lightning, User, WarningCircle, Buildings,
-    CurrencyInr, CurrencyEur, CurrencyGbp, CurrencyDollar, Target
+    CurrencyInr, CurrencyEur, CurrencyGbp, CurrencyDollar, Target, List
 } from '@phosphor-icons/react';
 
 const getCurrencyIcon = (salaryStr) => {
@@ -55,6 +55,7 @@ const CandidateDashboard = () => {
     const [applyingId, setApplyingId] = useState(null);
     const [withdrawModal, setWithdrawModal] = useState({ show: false, appId: null });
     const [errorMessage, setErrorMessage] = useState('');
+    const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const [jobPage, setJobPage] = useState(1);
     const [appPage, setAppPage] = useState(1);
@@ -171,10 +172,18 @@ const CandidateDashboard = () => {
             </AnimatePresence>
 
             {/* ── Layout: sidebar + main ── */}
-            <div style={{ display: 'flex', paddingTop: '64px', minHeight: '100vh' }}>
+            <div className="flex flex-col md:flex-row min-h-screen pt-[64px]">
+                
+                {/* Mobile Menu Toggle */}
+                <div className="md:hidden flex justify-between items-center p-4 bg-white border-b border-gray-200">
+                    <span className="font-bricolage font-bold text-lg text-gray-800">Dashboard Menu</span>
+                    <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-gray-600">
+                        <List size={28} weight="duotone" />
+                    </button>
+                </div>
 
                 {/* SIDEBAR */}
-                <aside style={{ width: '240px', flexShrink: 0, position: 'sticky', top: '64px', height: 'calc(100vh - 64px)', background: 'var(--pro-surface)', borderRight: '1px solid var(--pro-border)', display: 'flex', flexDirection: 'column', padding: '28px 16px 20px', overflowY: 'auto' }}>
+                <aside className={`${sidebarOpen ? 'flex' : 'hidden'} md:flex flex-col w-full md:w-[240px] shrink-0 md:sticky top-[64px] md:h-[calc(100vh-64px)] overflow-y-auto`} style={{ background: 'var(--pro-surface)', borderRight: '1px solid var(--pro-border)', padding: '28px 16px 20px' }}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
                         {avatarUrl ? (
                             <img src={avatarUrl} alt="avatar" style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,107,107,0.25)', marginBottom: '12px' }} />
@@ -216,7 +225,7 @@ const CandidateDashboard = () => {
                 </aside>
 
                 {/* MAIN */}
-                <main style={{ flex: 1, padding: '36px 32px 60px', minWidth: 0 }}>
+                <main className="flex-1 min-w-0" style={{ padding: '36px 5vw 60px' }}>
                     <div style={{ marginBottom: '32px' }}>
                         <h1 className="font-bricolage" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--pro-text-main)', marginBottom: '6px' }}>
                             Welcome back, {user?.first_name || user?.user_name || 'Candidate'}!
@@ -276,8 +285,8 @@ const CandidateDashboard = () => {
                                 jobs.map((job, index) => (
                                     <motion.div key={job.job_id}
                                         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }}
-                                        className="pro-card"
-                                        style={{ padding: '24px 28px', borderRadius: '20px', borderLeft: matchBorder(job.match_score), display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '20px', flexWrap: 'wrap' }}>
+                                        className="pro-card flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5 flex-wrap"
+                                        style={{ padding: '24px 28px', borderLeft: matchBorder(job.match_score) }}>
                                         <div style={{ flex: 1, minWidth: '220px' }}>
                                             <h3 className="font-bricolage" style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--pro-text-main)', marginBottom: '4px' }}>
                                                 {job.job_title}
@@ -305,7 +314,7 @@ const CandidateDashboard = () => {
                                                 )}
                                             </div>
                                         </div>
-                                        <div style={{ display: 'flex', alignItems: 'center', gap: '20px', flexShrink: 0 }}>
+                                        <div className="flex flex-row lg:flex-col items-center lg:items-end justify-between w-full lg:w-auto gap-4 shrink-0 mt-4 lg:mt-0">
                                             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '6px' }}>
                                                 {(() => {
                                                     const s = getScoreStyle(job.match_score);
@@ -375,8 +384,8 @@ const CandidateDashboard = () => {
                                     return (
                                         <motion.div key={app.application_id}
                                             initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.06 }}
-                                            className="pro-card"
-                                            style={{ padding: '22px 28px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                                            className="pro-card flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap"
+                                            style={{ padding: '22px 28px' }}>
                                             <div style={{ flex: 1, minWidth: '220px' }}>
                                                 <h3 className="font-bricolage" style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--pro-text-main)', marginBottom: '4px' }}>
                                                     {app.job_title || `Job #${app.job_id}`}

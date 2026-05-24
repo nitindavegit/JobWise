@@ -8,7 +8,7 @@ import {
   Users, Briefcase, MapPin, Coins, ChartBar, Plus,
   ArrowLeft, X, RocketLaunch, Building, Buildings, CheckCircle, Clock,
   CurrencyInr, CurrencyEur, CurrencyGbp, CurrencyDollar,
-  PlusCircle, SignOut, SealCheck, XCircle, Eye, PauseCircle, PlayCircle
+  PlusCircle, SignOut, SealCheck, XCircle, Eye, PauseCircle, PlayCircle, List
 } from '@phosphor-icons/react';
 
 const getCurrencyIcon = (salaryStr) => {
@@ -52,6 +52,7 @@ const EmployerDashboard = () => {
   const [selectedJob, setSelectedJob] = useState(null);
   const [applicants, setApplicants] = useState([]);
   const [loadingApps, setLoadingApps] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Create job form
   const [form, setForm] = useState({
@@ -143,9 +144,17 @@ const EmployerDashboard = () => {
     <div className="pro-dashboard" style={{ minHeight: '100vh', backgroundColor: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)' }}>
       <Navbar />
 
-      <div style={{ display: 'flex', paddingTop: '64px', minHeight: '100vh' }}>
+      <div className="flex flex-col md:flex-row min-h-screen pt-[64px]">
+        {/* Mobile Menu Toggle */}
+        <div className="md:hidden flex justify-between items-center p-4 bg-white border-b border-gray-200">
+          <span className="font-bricolage font-bold text-lg text-gray-800">Dashboard Menu</span>
+          <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 text-gray-600">
+            <List size={28} weight="duotone" />
+          </button>
+        </div>
+
         {/* SIDEBAR */}
-        <aside style={{ width: '240px', flexShrink: 0, position: 'sticky', top: '64px', height: 'calc(100vh - 64px)', background: 'var(--pro-surface)', borderRight: '1px solid var(--pro-border)', display: 'flex', flexDirection: 'column', padding: '28px 16px 20px', overflowY: 'auto' }}>
+        <aside className={`${sidebarOpen ? 'flex' : 'hidden'} md:flex flex-col w-full md:w-[240px] shrink-0 md:sticky top-[64px] md:h-[calc(100vh-64px)] overflow-y-auto`} style={{ background: 'var(--pro-surface)', borderRight: '1px solid var(--pro-border)', padding: '28px 16px 20px' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
             {avatarUrl ? (
               <img src={avatarUrl} alt="avatar" style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,107,107,0.25)', marginBottom: '12px' }} />
@@ -190,7 +199,7 @@ const EmployerDashboard = () => {
         </aside>
 
         {/* MAIN */}
-        <main style={{ flex: 1, padding: '36px 32px 60px', minWidth: 0, maxWidth: '1000px', margin: '0 auto' }}>
+        <main className="flex-1 min-w-0" style={{ padding: '36px 5vw 60px', maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ marginBottom: '32px' }}>
             <h1 className="font-bricolage" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--pro-text-main)', marginBottom: '6px' }}>
               Welcome back, {user?.first_name || user?.user_name || 'Employer'}!
@@ -253,7 +262,7 @@ const EmployerDashboard = () => {
                 jobs.map(job => {
                   const badge = STATUS_BADGE[job.job_status] || STATUS_BADGE.open;
                   return (
-                    <div key={job.job_id} className="pro-card" style={{ padding: '24px 32px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap', transition: 'transform 0.2s ease' }}
+                    <div key={job.job_id} className="pro-card flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 flex-wrap transition-transform duration-200" style={{ padding: '24px 32px' }}
                       onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-2px)'}
                       onMouseLeave={e => e.currentTarget.style.transform = 'translateY(0)'}>
                       <div style={{ flex: 1, minWidth: '200px' }}>
@@ -342,11 +351,11 @@ const EmployerDashboard = () => {
 
                 <div style={{ marginBottom: '16px' }}>
                   <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--pro-text-main)', marginBottom: '8px' }}>Salary Range</label>
-                  <div style={{ display: 'flex', gap: '10px' }}>
+                  <div className="flex flex-col md:flex-row gap-4">
                     <input type="text" value={form.min_salary} onChange={e => setForm({ ...form, min_salary: e.target.value })} placeholder="Min (e.g. 80,000)" style={{ ...inputStyle, flex: 1 }} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'} />
-                    <span style={{ display: 'flex', alignItems: 'center', color: 'var(--pro-text-muted)' }}>-</span>
+                    <span className="hidden md:flex items-center text-gray-500">-</span>
                     <input type="text" value={form.max_salary} onChange={e => setForm({ ...form, max_salary: e.target.value })} placeholder="Max (e.g. 120,000)" style={{ ...inputStyle, flex: 1 }} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'} />
-                    <select value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} style={{ ...inputStyle, width: '100px' }} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}>
+                    <select value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} className="w-full md:w-[100px]" style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}>
                       <option value="USD">USD</option>
                       <option value="EUR">EUR</option>
                       <option value="GBP">GBP</option>
@@ -411,7 +420,7 @@ const EmployerDashboard = () => {
                     const cfg = APP_STATUS[app.status] || APP_STATUS.applied;
                     const Icon = cfg.icon;
                     return (
-                      <div key={app.application_id} className="pro-card" style={{ padding: '20px 28px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+                      <div key={app.application_id} className="pro-card flex flex-col md:flex-row justify-between items-start md:items-center gap-4 flex-wrap" style={{ padding: '20px 28px' }}>
                         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
                           <div>
                             <h4 className="font-bricolage" style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--pro-text-main)', marginBottom: '4px' }}>
@@ -438,7 +447,7 @@ const EmployerDashboard = () => {
                             </div>
                           </div>
                         </div>
-                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <div className="flex flex-row flex-wrap gap-2 items-center mt-2 md:mt-0">
                           {(app.status === 'applied' || app.status === 'reviewing') && (
                             <>
                               {app.status === 'applied' && (
