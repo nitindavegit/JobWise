@@ -146,7 +146,7 @@ const EmployerDashboard = () => {
 
       <div className="flex flex-col md:flex-row min-h-screen pt-[64px]">
         {/* Mobile Menu Toggle */}
-        <div className="jw-dash-mobile-toggle" style={{ display: 'none', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: 'white', borderBottom: '1px solid #e5e7eb' }}>
+        <div className="jw-dash-mobile-toggle" style={{ display: 'none', justifyContent: 'space-between', alignItems: 'center', padding: '14px 20px', background: 'white', borderBottom: '1px solid #e5e7eb', position: 'sticky', top: '64px', zIndex: 50 }}>
           <span className="font-bricolage" style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1f2937' }}>Dashboard Menu</span>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ padding: '8px', color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', borderRadius: '8px' }}>
             <List size={28} weight="duotone" />
