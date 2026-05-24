@@ -1,264 +1,313 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, LogOut, LayoutDashboard } from 'lucide-react';
+import { List, X } from '@phosphor-icons/react';
 import Logo from './Logo';
 import { useAuth } from '../context/useAuth';
 
+// ── Nav items — only shown on the landing page ──
+const LANDING_LINKS = [
+  { label: 'Features',      key: 'features',      href: '#features' },
+  { label: 'How It Works',  key: 'how-it-works',  href: '#how-it-works' },
+  { label: 'For Employers', key: 'for-employers',  href: '#employers' },
+];
+
+// ── Colour tokens ──
+const CORAL = '#f07060';
+const MUTED = '#555555';
+const RADIUS = 60;
+
 const Navbar = () => {
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+  const [hidden, setHidden] = useState(false);
   const { user, logout } = useAuth();
-  const location = useLocation();
+  const location    = useLocation();
+  const prevPathRef = useRef(location.pathname);
+  const lastScrollY = useRef(0);
+  const isLanding   = location.pathname === '/';
 
-  const isLanding = location.pathname === '/';
-
-  // Track scroll to add shadow when not at top
+  // hide navbar on scroll down, show on scroll up
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
+    const handleScroll = () => {
+      const y = window.scrollY;
+      setHidden(y > 80 && y > lastScrollY.current);
+      lastScrollY.current = y;
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Close mobile menu on route change
+  // close mobile panel when route changes
   useEffect(() => {
-    setMobileOpen(false);
-  }, [location.pathname]);
-
-  // Landing page anchor links
-  const landingLinks = [
-    { label: 'Features', href: '#features' },
-    { label: 'How It Works', href: '#how-it-works' },
-    { label: 'For Employers', href: '#employers' },
-  ];
-
-  const handleAnchorClick = (e, href) => {
-    if (isLanding) {
-      e.preventDefault();
-      const el = document.querySelector(href);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+    if (location.pathname !== prevPathRef.current) {
+      prevPathRef.current = location.pathname;
       setMobileOpen(false);
     }
+  }, [location.pathname]);
+
+  // smooth anchor scroll (only on landing page)
+  const handleAnchorClick = (e, href) => {
+    if (isLanding && href.startsWith('#')) {
+      e.preventDefault();
+      document.querySelector(href)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    setMobileOpen(false);
   };
 
+  // initials for logged-in avatar circle
+  const initials = (
+    (user?.first_name?.[0] || '') +
+    (user?.last_name?.[0]  || '') ||
+    (user?.user_name?.[0]  || 'U')
+  ).toUpperCase();
+
   return (
+    // ── outer shell: fixed, inset from viewport edges ──
+    // `flex justify-center` makes the pill sit dead-centre horizontally
     <nav
-      className="fixed top-0 left-0 right-0 z-50 px-4 pt-4"
+      className="fixed top-0 left-0 right-0 z-60 pt-[20px] pb-[20px] flex justify-center"
       data-testid="navbar"
+      aria-label="Primary navigation"
+      style={{
+        transition: 'transform 0.35s cubic-bezier(0.4,0,0.2,1)',
+        transform: hidden ? 'translateY(-120%)' : 'translateY(0)',
+      }}
     >
-      {/* Pill Container */}
+      {/* ── THE PILL ──
+          `font-outfit` class → sets font-family here; all children inherit. */}
       <div
-        className="mx-auto max-w-6xl rounded-full px-6 py-3 flex items-center justify-between transition-shadow duration-300"
+        className="font-outfit"
         style={{
-          background: 'rgba(255, 255, 255, 0.7)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255, 255, 255, 0.6)',
-          boxShadow: scrolled
-            ? '0 8px 32px rgba(26, 11, 46, 0.12)'
-            : '0 4px 16px rgba(26, 11, 46, 0.06)',
+          display         : 'flex',
+          alignItems      : 'center',
+          justifyContent  : 'space-between',
+          gap             : '28px',
+          padding         : '18px 36px',
+          borderRadius    : `${RADIUS}px`,
+          background      : '#ffffff',
+          boxShadow       : '0 4px 6px rgba(0, 0, 0, 0.05)',
+          border          : 'none',
+          flexShrink      : 0,
         }}
       >
-        {/* Logo */}
-        <Link to="/" className="flex-shrink-0" data-testid="navbar-logo">
+
+        {/* ─── Logo ─── */}
+        <Link to="/" className="shrink-0" data-testid="navbar-logo" aria-label="JobWise home">
           <Logo size="md" />
         </Link>
 
-        {/* Desktop Nav Links */}
-        <div className="hidden md:flex items-center gap-8">
-          {isLanding &&
-            landingLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleAnchorClick(e, link.href)}
-                className="font-outfit text-sm font-medium transition-colors duration-200 hover:text-[var(--jw-coral)]"
-                style={{ color: 'var(--jw-text)' }}
-                data-testid={`navbar-link-${link.label.toLowerCase().replace(/\s/g, '-')}`}
-              >
-                {link.label}
-              </a>
-            ))}
+        {/* ─── Centred nav links (hidden on mobile, only on landing) ─── */}
+        {isLanding && (
+        <div className="hidden md:flex items-center flex-1 justify-center" style={{ gap: '36px' }}>
+          {LANDING_LINKS.map(({ label, key, href }) => (
+                <a
+                  key={key}
+                  href={href}
+                  onClick={(e) => handleAnchorClick(e, href)}
+                  data-testid={`navbar-link-${key}`}
+                  style={{
+                    color           : MUTED,
+                    fontWeight      : 500,
+                    fontSize        : '15px',
+                    textDecoration  : 'none',
+                    transition      : 'color 0.18s ease',
+                    fontFamily      : 'inherit',
+                    cursor          : 'pointer',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = CORAL; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = MUTED; }}
+                >
+                  {label}
+                </a>
+          ))}
         </div>
+        )}
+        {!isLanding && <div style={{ flex: 1 }} />}
 
-        {/* Desktop Auth Actions */}
-        <div className="hidden md:flex items-center gap-3">
-          {user ? (
-            <>
-              <Link
-                to={user.user_type === 'employer' ? '/employer' : '/dashboard'}
-                className="flex items-center gap-2 font-outfit text-sm font-medium px-5 py-2.5 rounded-full transition-all duration-200 hover:-translate-y-0.5"
-                style={{
-                  background: 'var(--jw-dark)',
-                  color: 'white',
-                }}
-                data-testid="navbar-dashboard-btn"
-              >
-                <LayoutDashboard size={16} />
-                Dashboard
-              </Link>
-              <button
-                onClick={logout}
-                className="flex items-center gap-1.5 font-outfit text-sm font-medium px-4 py-2.5 rounded-full transition-colors duration-200 cursor-pointer"
-                style={{
-                  color: 'var(--jw-text)',
-                  background: 'transparent',
-                  border: 'none',
-                }}
-                data-testid="navbar-logout-btn"
-              >
-                <LogOut size={15} />
-                Logout
-              </button>
-            </>
+        {/* ─── Auth / Profile (desktop) ─── */}
+        <div className="hidden md:flex items-center gap-6 shrink-0">
+          {!user ? (
+            // ── Logged out: Get started only ──
+            <Link
+              to="/signup"
+              data-testid="navbar-getstarted-btn"
+              style={{
+                background     : CORAL,
+                color          : '#ffffff',
+                fontWeight     : 600,
+                fontSize       : '15px',
+                borderRadius    : '20px',
+                padding        : '10px 22px',
+                fontFamily     : 'inherit',
+                textDecoration : 'none',
+              }}
+            >
+              Get started
+            </Link>
           ) : (
+            // ── Logged in: avatar + Log out ──
             <>
               <Link
-                to="/login"
-                className="font-outfit text-sm font-medium px-4 py-2.5 rounded-full transition-colors duration-200 hover:text-[var(--jw-coral)]"
-                style={{ color: 'var(--jw-text)' }}
-                data-testid="navbar-signin-btn"
-              >
-                Sign in
-              </Link>
-              <Link
-                to="/signup"
-                className="font-outfit text-sm font-semibold px-6 py-2.5 rounded-full transition-all duration-200 hover:-translate-y-0.5"
+                to="/dashboard"
+                data-testid="navbar-avatar-btn"
+                aria-label={`Profile — ${user.user_name}`}
+                title={user.user_name}
                 style={{
-                  background: 'var(--jw-coral)',
-                  color: 'white',
-                  boxShadow: '0 4px 14px rgba(255, 107, 107, 0.35)',
+                  width          : '38px',
+                  height         : '38px',
+                  borderRadius    : '50%',
+                  overflow       : 'hidden',
+                  display        : 'flex',
+                  alignItems     : 'center',
+                  justifyContent : 'center',
+                  textDecoration : 'none',
+                  flexShrink     : 0,
+                  border         : `2px solid ${CORAL}`,
+                  background     : user?.profile_picture_url ? 'transparent' : CORAL,
+                  color          : '#ffffff',
+                  fontWeight     : 700,
+                  fontSize       : '0.8rem',
+                  fontFamily     : 'inherit',
                 }}
-                data-testid="navbar-getstarted-btn"
               >
-                Get Started
+                {user?.profile_picture_url ? (
+                  <img src={user.profile_picture_url} alt={initials} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : initials}
               </Link>
+
+              <button
+                onClick={() => { logout(); setMobileOpen(false); }}
+                data-testid="navbar-logout-btn"
+                aria-label="Log out"
+                style={{
+                  color          : MUTED,
+                  fontWeight     : 500,
+                  fontSize       : '15px',
+                  fontFamily     : 'inherit',
+                  background     : 'none',
+                  border         : 'none',
+                  cursor         : 'pointer',
+                  padding        : '8px 14px',
+                }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = CORAL; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = MUTED; }}
+              >
+                Log out
+              </button>
             </>
           )}
         </div>
 
-        {/* Mobile Hamburger */}
+        {/* ─── Mobile hamburger ─── */}
         <button
-          className="md:hidden flex items-center justify-center w-10 h-10 rounded-full transition-colors duration-200 cursor-pointer"
+          className="md:hidden flex items-center justify-center shrink-0"
           style={{
-            background: mobileOpen ? 'var(--jw-bg2)' : 'transparent',
-            border: 'none',
-            color: 'var(--jw-text)',
+            width         : '40px',
+            height        : '40px',
+            borderRadius   : '50%',
+            border         : 'none',
+            background     : 'transparent',
+            color          : MUTED,
+            cursor         : 'pointer',
+            padding        : 0,
           }}
-          onClick={() => setMobileOpen(!mobileOpen)}
+          onClick={() => setMobileOpen((v) => !v)}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
           data-testid="navbar-hamburger"
         >
-          {mobileOpen ? <X size={22} /> : <Menu size={22} />}
+          {mobileOpen ? <X weight="duotone" size={24} color="var(--jw-dark)" /> : <List weight="duotone" size={24} color="var(--jw-dark)" />}
         </button>
       </div>
 
-      {/* Mobile Dropdown Menu */}
-      <div
-        className="md:hidden mx-auto max-w-6xl mt-2 rounded-3xl overflow-hidden transition-all duration-300"
-        style={{
-          background: 'rgba(255, 255, 255, 0.85)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
-          border: '1px solid rgba(255, 255, 255, 0.6)',
-          boxShadow: '0 12px 40px rgba(26, 11, 46, 0.12)',
-          maxHeight: mobileOpen ? '400px' : '0',
-          opacity: mobileOpen ? 1 : 0,
-          padding: mobileOpen ? '1.5rem' : '0 1.5rem',
-        }}
-      >
-        {/* Mobile Nav Links */}
-        {isLanding && (
-          <div className="flex flex-col gap-1 mb-4">
-            {landingLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                onClick={(e) => handleAnchorClick(e, link.href)}
-                className="font-outfit text-base font-medium px-4 py-3 rounded-2xl transition-colors duration-200"
-                style={{ color: 'var(--jw-text)' }}
-                data-testid={`navbar-mobile-${link.label.toLowerCase().replace(/\s/g, '-')}`}
-              >
-                {link.label}
-              </a>
+      {/* ── Mobile dropdown ── */}
+      {mobileOpen && (
+        <div
+          className="md:hidden"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Mobile navigation"
+          style={{
+            margin         : '8px auto 0',
+            maxWidth       : 'fit-content',
+            width          : 'fit-content',
+            borderRadius    : '24px',
+            background     : '#ffffff',
+            padding        : '20px 18px',
+            boxShadow      : '0 8px 32px rgba(0,0,0,0.08)',
+            fontFamily     : 'var(--font-outfit), Outfit, sans-serif',
+          }}
+        >
+          {/* mobile nav links — only on landing */}
+          {isLanding && (
+          <div className="flex flex-col gap-4">
+            {LANDING_LINKS.map(({ label, key, href }) => (
+                  <a
+                    key={key}
+                    href={href}
+                    onClick={(e) => handleAnchorClick(e, href)}
+                    data-testid={`navbar-mobile-${key}`}
+                    style={{
+                      color          : MUTED,
+                      fontWeight     : 600,
+                      fontSize       : '15px',
+                      textDecoration : 'none',
+                      padding        : '10px 8px',
+                      borderRadius    : '14px',
+                      fontFamily     : 'inherit',
+                    }}
+                  >
+                    {label}
+                  </a>
             ))}
           </div>
-        )}
-
-        {/* Mobile Divider */}
-        <div
-          className="my-2"
-          style={{
-            height: '1px',
-            background: 'rgba(26, 11, 46, 0.08)',
-          }}
-        />
-
-        {/* Mobile Auth Actions */}
-        <div className="flex flex-col gap-2 mt-3">
-          {user ? (
-            <>
-              <Link
-                to={user.user_type === 'employer' ? '/employer' : '/dashboard'}
-                className="flex items-center justify-center gap-2 font-outfit text-sm font-semibold px-5 py-3 rounded-full transition-all duration-200"
-                style={{
-                  background: 'var(--jw-dark)',
-                  color: 'white',
-                }}
-                data-testid="navbar-mobile-dashboard"
-              >
-                <LayoutDashboard size={16} />
-                Dashboard
-              </Link>
-              <button
-                onClick={() => {
-                  logout();
-                  setMobileOpen(false);
-                }}
-                className="flex items-center justify-center gap-2 font-outfit text-sm font-medium px-5 py-3 rounded-full cursor-pointer"
-                style={{
-                  color: 'var(--jw-coral)',
-                  background: 'rgba(255, 107, 107, 0.08)',
-                  border: 'none',
-                }}
-                data-testid="navbar-mobile-logout"
-              >
-                <LogOut size={15} />
-                Logout
-              </button>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className="font-outfit text-sm font-medium text-center px-5 py-3 rounded-full transition-colors duration-200"
-                style={{
-                  color: 'var(--jw-text)',
-                  background: 'rgba(26, 11, 46, 0.04)',
-                }}
-                onClick={() => setMobileOpen(false)}
-                data-testid="navbar-mobile-signin"
-              >
-                Sign in
-              </Link>
-              <Link
-                to="/signup"
-                className="font-outfit text-sm font-semibold text-center px-5 py-3 rounded-full transition-all duration-200"
-                style={{
-                  background: 'var(--jw-coral)',
-                  color: 'white',
-                  boxShadow: '0 4px 14px rgba(255, 107, 107, 0.35)',
-                }}
-                onClick={() => setMobileOpen(false)}
-                data-testid="navbar-mobile-getstarted"
-              >
-                Get Started
-              </Link>
-            </>
           )}
+
+          {/* divider */}
+          <div style={{ height: '1px', background: '#e5e7eb', margin: '10px 0' }} />
+
+          {/* auth buttons */}
+          <div className="flex flex-col gap-4">
+            {!user ? (
+              <>
+                <Link
+                  to="/signup"
+                  onClick={() => setMobileOpen(false)}
+                  style={{
+                    background     : CORAL,
+                    color          : '#ffffff',
+                    fontWeight     : 600,
+                    fontSize       : '15px',
+                    textAlign      : 'center',
+                    textDecoration : 'none',
+                    fontFamily     : 'inherit',
+                    padding        : '12px 14px',
+                    borderRadius    : '14px',
+                  }}
+                >
+                  Get started
+                </Link>
+              </>
+            ) : (
+              <button
+                onClick={() => { logout(); setMobileOpen(false); }}
+                style={{
+                  background     : '#f9fafb',
+                  color          : CORAL,
+                  fontWeight     : 600,
+                  fontSize       : '15px',
+                  textAlign      : 'center',
+                  border         : 'none',
+                  fontFamily     : 'inherit',
+                  padding        : '12px 14px',
+                  borderRadius    : '14px',
+                  cursor         : 'pointer',
+                }}
+              >
+                Log out
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </nav>
   );
 };

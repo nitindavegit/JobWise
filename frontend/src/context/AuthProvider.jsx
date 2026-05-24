@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthContext } from './AuthContext';
 import apiClient from '../api/client';
 
@@ -11,6 +11,18 @@ const getStoredUser = () => {
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(getStoredUser);
   const [token, setToken] = useState(getStoredToken);
+
+  // Refresh user data from API on app load (keeps avatar, profile_completed, etc. in sync)
+  useEffect(() => {
+    if (token) {
+      apiClient.get('/user/me')
+        .then(res => {
+          setUser(res.data);
+          localStorage.setItem('user', JSON.stringify(res.data));
+        })
+        .catch(() => { /* token expired or invalid — ignore, user stays as-is */ });
+    }
+  }, [token]);
 
   const login = async (username, password) => {
     const response = await apiClient.post('/login', {

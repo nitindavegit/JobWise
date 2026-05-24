@@ -1,5 +1,5 @@
 import { Component } from 'react';
-import { AlertCircle } from 'lucide-react';
+import { WarningCircle } from '@phosphor-icons/react';
 
 class ErrorBoundary extends Component {
   constructor(props) {
@@ -19,7 +19,7 @@ class ErrorBoundary extends Component {
           backgroundImage: 'var(--mesh-bg)', backgroundColor: 'var(--jw-bg)', padding: '24px',
         }}>
           <div className="glass-card" style={{ padding: '48px', borderRadius: '28px', textAlign: 'center', maxWidth: '440px' }}>
-            <AlertCircle size={48} color="var(--jw-coral)" style={{ marginBottom: '16px' }} />
+            <WarningCircle weight="duotone" size={64} style={{ color: "var(--jw-coral)", marginBottom: "20px", display: "inline-block" }} />
             <h2 className="font-bricolage" style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--jw-dark)', marginBottom: '8px' }}>
               Something went wrong
             </h2>

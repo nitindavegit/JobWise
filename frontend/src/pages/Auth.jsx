@@ -1,351 +1,332 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useMemo } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/useAuth';
+import { Eye, EyeClosed, WarningCircle, User, Buildings, CheckCircle, XCircle } from '@phosphor-icons/react';
 import Logo from '../components/Logo';
-import { Mail, Lock, User, ArrowRight, Eye, EyeOff, Briefcase, UserCheck } from 'lucide-react';
 
 const Auth = ({ isSignup = false }) => {
   const navigate = useNavigate();
   const { login, signup } = useAuth();
 
-  const [mode, setMode] = useState(isSignup ? 'signup' : 'login');
+  const [isLoginMode, setIsLoginMode] = useState(!isSignup);
   const [userType, setUserType] = useState('candidate');
+  const [formData, setFormData] = useState({
+    user_name: '',
+    user_email: '',
+    user_password: '',
+  });
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  // Form fields
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const appliedInitRef = useRef(null);
+  if (appliedInitRef.current == null) {
+    appliedInitRef.current = true;
+    setIsLoginMode(!isSignup);
+  }
+
+  // Password strength checks
+  const pwChecks = useMemo(() => {
+    const pw = formData.user_password;
+    return [
+      { label: 'At least 8 characters', pass: pw.length >= 8 },
+      { label: 'One uppercase letter', pass: /[A-Z]/.test(pw) },
+      { label: 'One number', pass: /[0-9]/.test(pw) },
+      { label: 'One special character', pass: /[^A-Za-z0-9]/.test(pw) },
+    ];
+  }, [formData.user_password]);
+
+  const allPwValid = pwChecks.every(c => c.pass);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
+    if (!isLoginMode && !allPwValid) {
+      setError('Please meet all password requirements.');
+      return;
+    }
     setLoading(true);
-
+    setError('');
     try {
-      let userData;
-      if (mode === 'login') {
-        userData = await login(username, password);
-      } else {
-        userData = await signup(username, email, password, userType);
-      }
-
-      // Route based on user type + profile completion
-      if (!userData.profile_completed) {
-        // Onboarding required
-        if (userData.user_type === 'employer') {
-          navigate('/onboarding/employer');
+      if (isLoginMode) {
+        const userData = await login(formData.user_name, formData.user_password);
+        // Redirect based on profile state
+        if (!userData.profile_completed) {
+          navigate(`/onboarding/${userData.user_type}`);
         } else {
-          navigate('/onboarding/candidate');
+          navigate(userData.user_type === 'employer' ? '/employer' : '/dashboard');
         }
-      } else if (userData.user_type === 'employer') {
-        navigate('/employer');
       } else {
-        navigate('/dashboard');
+        const userData = await signup(formData.user_name, formData.user_email, formData.user_password, userType);
+        // New user → always go to onboarding
+        navigate(`/onboarding/${userType}`);
       }
     } catch (err) {
-      const msg = err.response?.data?.detail || 'Something went wrong. Please try again.';
-      setError(msg);
+      setError(err.response?.data?.detail || err.message || 'An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
-  return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundImage: 'var(--mesh-bg)',
-      backgroundColor: 'var(--jw-bg)',
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      padding: '40px 20px',
-      position: 'relative', overflow: 'hidden',
-    }}>
-      {/* Decorative blobs */}
-      <div style={{
-        position: 'absolute', top: '-80px', left: '-80px',
-        width: '400px', height: '400px', borderRadius: '50%',
-        background: 'var(--jw-lavender)', opacity: 0.3, filter: 'blur(100px)',
-        pointerEvents: 'none',
-      }} />
-      <div style={{
-        position: 'absolute', bottom: '-60px', right: '-60px',
-        width: '350px', height: '350px', borderRadius: '50%',
-        background: 'var(--jw-peach)', opacity: 0.3, filter: 'blur(100px)',
-        pointerEvents: 'none',
-      }} />
+  const inputStyle = {
+    width: '100%',
+    padding: '14px 16px',
+    borderRadius: '14px',
+    border: '1.5px solid rgba(26,11,46,0.1)',
+    background: 'rgba(255,255,255,0.8)',
+    fontSize: '0.95rem',
+    color: 'var(--jw-dark)',
+    outline: 'none',
+    fontFamily: 'var(--font-outfit)',
+    boxSizing: 'border-box',
+    transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
+  };
 
-      <div style={{ position: 'relative', zIndex: 10, width: '100%', maxWidth: '460px' }}>
-        {/* Logo */}
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+      <motion.div
+        initial={{ opacity: 0, y: 30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        style={{ width: '100%', maxWidth: '440px' }}
+      >
+        {/* Logo + Tagline */}
         <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-          <Link to="/" style={{ textDecoration: 'none' }}>
-            <Logo size="lg" />
+          <Link to="/" style={{ display: 'inline-block', marginBottom: '16px' }}>
+            <Logo size="xl" />
           </Link>
+          <p className="font-outfit" style={{ color: '#6b7280', fontSize: '1rem' }}>
+            {isLoginMode ? 'Welcome back! Sign in to continue.' : 'Create your account to get started.'}
+          </p>
         </div>
 
-        {/* Card */}
-        <div className="glass-card" style={{
-          padding: '44px 40px', borderRadius: '28px',
-          boxShadow: '0 16px 64px rgba(26,11,46,0.08)',
+        {/* Form Card */}
+        <div style={{
+          padding: '40px 36px',
+          borderRadius: '28px',
+          background: 'rgba(255,255,255,0.75)',
+          backdropFilter: 'blur(24px)',
+          WebkitBackdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255,255,255,0.6)',
+          boxShadow: '0 12px 40px rgba(26,11,46,0.10)',
         }}>
-          {/* Title */}
-          <h1 className="font-bricolage" style={{
-            fontSize: '1.75rem', fontWeight: 800, color: 'var(--jw-dark)',
-            textAlign: 'center', marginBottom: '8px',
-          }}>
-            {mode === 'login' ? 'Welcome back' : 'Create your account'}
-          </h1>
-          <p className="font-outfit" style={{
-            fontSize: '0.9rem', color: '#9ca3af', textAlign: 'center', marginBottom: '32px',
-          }}>
-            {mode === 'login'
-              ? 'Sign in to access your personalized matches'
-              : 'Start your AI-powered job matching journey'}
-          </p>
 
-          {/* User type selector (signup only) */}
-          {mode === 'signup' && (
-            <div style={{
-              display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px',
-              marginBottom: '28px',
-            }}>
-              {[
-                { type: 'candidate', icon: UserCheck, label: 'Candidate', desc: 'Find jobs' },
-                { type: 'employer', icon: Briefcase, label: 'Employer', desc: 'Hire talent' },
-              ].map(({ type, icon: Icon, label, desc }) => (
-                <button
-                  key={type}
-                  type="button"
-                  onClick={() => setUserType(type)}
-                  style={{
-                    padding: '16px', borderRadius: '16px', border: '2px solid',
-                    borderColor: userType === type ? 'var(--jw-coral)' : 'rgba(26,11,46,0.08)',
-                    background: userType === type ? 'rgba(255,107,107,0.06)' : 'transparent',
-                    cursor: 'pointer', textAlign: 'center',
-                    transition: 'all 0.2s ease',
-                  }}
-                >
-                  <Icon
-                    size={24}
-                    color={userType === type ? 'var(--jw-coral)' : '#9ca3af'}
-                    style={{ marginBottom: '8px' }}
-                  />
-                  <div className="font-bricolage" style={{
-                    fontSize: '0.9rem', fontWeight: 700,
-                    color: userType === type ? 'var(--jw-dark)' : '#6b7280',
-                  }}>{label}</div>
-                  <div className="font-outfit" style={{
-                    fontSize: '0.7rem', color: '#9ca3af',
-                  }}>{desc}</div>
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Mode tabs */}
+          <div style={{ display: 'flex', gap: '4px', marginBottom: '28px', padding: '4px', background: 'rgba(26,11,46,0.04)', borderRadius: '14px' }}>
+            <button
+              type="button"
+              onClick={() => setIsLoginMode(true)}
+              className="font-outfit"
+              style={{
+                flex: 1, padding: '11px', borderRadius: '11px', border: 'none',
+                background: isLoginMode ? 'var(--jw-dark)' : 'transparent',
+                color: isLoginMode ? 'white' : '#9ca3af',
+                fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer', transition: 'all 0.25s ease',
+              }}
+            >
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => setIsLoginMode(false)}
+              className="font-outfit"
+              style={{
+                flex: 1, padding: '11px', borderRadius: '11px', border: 'none',
+                background: !isLoginMode ? 'var(--jw-dark)' : 'transparent',
+                color: !isLoginMode ? 'white' : '#9ca3af',
+                fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer', transition: 'all 0.25s ease',
+              }}
+            >
+              Sign Up
+            </button>
+          </div>
 
-          {/* Error message */}
-          {error && (
-            <div className="font-outfit" style={{
-              padding: '12px 16px', borderRadius: '12px', marginBottom: '20px',
-              background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.2)',
-              color: '#C62828', fontSize: '0.85rem', textAlign: 'center',
-            }}>
-              {error}
-            </div>
-          )}
+          {/* User Type Toggle - Sign Up only */}
+          <AnimatePresence>
+            {!isLoginMode && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                style={{ overflow: 'hidden', marginBottom: '20px' }}
+              >
+                <p className="font-outfit" style={{ fontSize: '0.78rem', fontWeight: 600, color: '#9ca3af', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '10px' }}>I am a</p>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  {[
+                    { key: 'candidate', label: 'Candidate', icon: User },
+                    { key: 'employer', label: 'Employer', icon: Buildings },
+                  ].map(({ key, label, icon: Icon }) => (
+                    <button
+                      key={key}
+                      type="button"
+                      onClick={() => setUserType(key)}
+                      className="font-outfit"
+                      style={{
+                        flex: 1, padding: '12px', borderRadius: '14px',
+                        border: userType === key ? '2px solid var(--jw-coral)' : '1.5px solid rgba(26,11,46,0.1)',
+                        background: userType === key ? 'rgba(255,107,107,0.06)' : 'white',
+                        color: userType === key ? 'var(--jw-coral)' : '#6b7280',
+                        fontWeight: 600, fontSize: '0.88rem', cursor: 'pointer', transition: 'all 0.2s ease',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                      }}
+                    >
+                      <Icon size={16} />
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          {/* Form */}
+          {/* Error */}
+          <AnimatePresence>
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="font-outfit"
+                style={{
+                  padding: '12px 16px', borderRadius: '12px', marginBottom: '20px',
+                  background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.2)',
+                  color: '#C62828', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '8px',
+                }}
+              >
+                <WarningCircle size={16} />
+                {error}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <form onSubmit={handleSubmit}>
             {/* Username */}
             <div style={{ marginBottom: '16px' }}>
-              <label className="font-outfit" style={{
-                display: 'block', fontSize: '0.8rem', fontWeight: 600,
-                color: 'var(--jw-dark)', marginBottom: '8px',
-              }}>Username</label>
-              <div style={{ position: 'relative' }}>
-                <User size={18} color="#9ca3af" style={{
-                  position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)',
-                }} />
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  placeholder="johndoe"
-                  required
-                  className="font-outfit"
-                  style={{
-                    width: '100%', padding: '14px 14px 14px 44px',
-                    borderRadius: '14px', border: '1.5px solid rgba(26,11,46,0.1)',
-                    background: 'rgba(255,255,255,0.6)', fontSize: '0.9rem',
-                    color: 'var(--jw-dark)', outline: 'none',
-                    transition: 'border-color 0.2s ease',
-                    boxSizing: 'border-box',
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--jw-coral)'}
-                  onBlur={(e) => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}
-                />
-              </div>
+              <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--jw-dark)', marginBottom: '8px' }}>
+                Username
+              </label>
+              <input
+                type="text"
+                value={formData.user_name}
+                onChange={(e) => setFormData({ ...formData, user_name: e.target.value.toLowerCase() })}
+                placeholder="Enter your username"
+                style={inputStyle}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--jw-coral)'; e.target.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(26,11,46,0.1)'; e.target.style.boxShadow = 'none'; }}
+                required
+              />
             </div>
 
-            {/* Email (signup only) */}
-            {mode === 'signup' && (
-              <div style={{ marginBottom: '16px' }}>
-                <label className="font-outfit" style={{
-                  display: 'block', fontSize: '0.8rem', fontWeight: 600,
-                  color: 'var(--jw-dark)', marginBottom: '8px',
-                }}>Email</label>
-                <div style={{ position: 'relative' }}>
-                  <Mail size={18} color="#9ca3af" style={{
-                    position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)',
-                  }} />
+            {/* Email - Sign Up only */}
+            <AnimatePresence>
+              {!isLoginMode && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ overflow: 'hidden', marginBottom: '16px' }}
+                >
+                  <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--jw-dark)', marginBottom: '8px' }}>
+                    Email
+                  </label>
                   <input
                     type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
+                    value={formData.user_email}
+                    onChange={(e) => setFormData({ ...formData, user_email: e.target.value })}
                     placeholder="you@example.com"
-                    required
-                    className="font-outfit"
-                    style={{
-                      width: '100%', padding: '14px 14px 14px 44px',
-                      borderRadius: '14px', border: '1.5px solid rgba(26,11,46,0.1)',
-                      background: 'rgba(255,255,255,0.6)', fontSize: '0.9rem',
-                      color: 'var(--jw-dark)', outline: 'none',
-                      transition: 'border-color 0.2s ease',
-                      boxSizing: 'border-box',
-                    }}
-                    onFocus={(e) => e.target.style.borderColor = 'var(--jw-coral)'}
-                    onBlur={(e) => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}
+                    style={inputStyle}
+                    onFocus={(e) => { e.target.style.borderColor = 'var(--jw-coral)'; e.target.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)'; }}
+                    onBlur={(e) => { e.target.style.borderColor = 'rgba(26,11,46,0.1)'; e.target.style.boxShadow = 'none'; }}
+                    required={!isLoginMode}
                   />
-                </div>
-              </div>
-            )}
+                </motion.div>
+              )}
+            </AnimatePresence>
 
             {/* Password */}
-            <div style={{ marginBottom: '28px' }}>
-              <label className="font-outfit" style={{
-                display: 'block', fontSize: '0.8rem', fontWeight: 600,
-                color: 'var(--jw-dark)', marginBottom: '8px',
-              }}>Password</label>
-              <div style={{ position: 'relative' }}>
-                <Lock size={18} color="#9ca3af" style={{
-                  position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)',
-                }} />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  className="font-outfit"
-                  style={{
-                    width: '100%', padding: '14px 48px 14px 44px',
-                    borderRadius: '14px', border: '1.5px solid rgba(26,11,46,0.1)',
-                    background: 'rgba(255,255,255,0.6)', fontSize: '0.9rem',
-                    color: 'var(--jw-dark)', outline: 'none',
-                    transition: 'border-color 0.2s ease',
-                    boxSizing: 'border-box',
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = 'var(--jw-coral)'}
-                  onBlur={(e) => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  style={{
-                    position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
-                    background: 'none', border: 'none', cursor: 'pointer', padding: '0',
-                  }}
-                >
-                  {showPassword
-                    ? <EyeOff size={18} color="#9ca3af" />
-                    : <Eye size={18} color="#9ca3af" />}
-                </button>
-              </div>
+            <div style={{ marginBottom: !isLoginMode ? '16px' : '28px', position: 'relative' }}>
+              <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--jw-dark)', marginBottom: '8px' }}>
+                Password
+              </label>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={formData.user_password}
+                onChange={(e) => setFormData({ ...formData, user_password: e.target.value })}
+                placeholder="Enter your password"
+                style={{ ...inputStyle, paddingRight: '48px' }}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--jw-coral)'; e.target.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(26,11,46,0.1)'; e.target.style.boxShadow = 'none'; }}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                style={{ position: 'absolute', right: '14px', top: '40px', background: 'none', border: 'none', cursor: 'pointer', color: '#9ca3af', padding: '4px' }}
+              >
+                {showPassword ? <EyeClosed size={18} /> : <Eye weight="duotone" size={18} />}
+              </button>
             </div>
 
-            {/* Submit button */}
-            <button
+            {/* Password strength - Sign Up only */}
+            <AnimatePresence>
+              {!isLoginMode && formData.user_password.length > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  style={{ overflow: 'hidden', marginBottom: '24px' }}
+                >
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px' }}>
+                    {pwChecks.map(c => (
+                      <div key={c.label} className="font-outfit" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', color: c.pass ? '#10B981' : '#9ca3af' }}>
+                        {c.pass ? <CheckCircle size={13} /> : <XCircle weight="duotone" size={13} />}
+                        {c.label}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Submit */}
+            <motion.button
               type="submit"
               disabled={loading}
-              className="btn-coral font-outfit"
+              whileHover={{ scale: loading ? 1 : 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              className="font-outfit"
               style={{
-                width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                gap: '8px', fontSize: '1rem', opacity: loading ? 0.7 : 1,
-                cursor: loading ? 'not-allowed' : 'pointer',
+                width: '100%', padding: '15px', fontSize: '0.95rem', fontWeight: 700,
+                borderRadius: '14px', border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
+                background: 'var(--jw-dark)', color: 'white',
+                opacity: loading ? 0.7 : 1, transition: 'opacity 0.2s ease',
+                display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
               }}
             >
               {loading ? (
-                <div style={{
-                  width: '20px', height: '20px', border: '2px solid rgba(255,255,255,0.3)',
-                  borderTopColor: 'white', borderRadius: '50%',
-                  animation: 'spin 0.8s linear infinite',
-                }} />
-              ) : (
                 <>
-                  {mode === 'login' ? 'Sign In' : 'Create Account'}
-                  <ArrowRight size={18} />
+                  <div style={{ width: '18px', height: '18px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                  Please wait...
                 </>
-              )}
-            </button>
+              ) : isLoginMode ? 'Sign In' : 'Create Account'}
+            </motion.button>
           </form>
 
-          {/* Divider */}
-          <div style={{
-            display: 'flex', alignItems: 'center', gap: '16px',
-            margin: '28px 0',
-          }}>
-            <div style={{ flex: 1, height: '1px', background: 'rgba(26,11,46,0.08)' }} />
-            <span className="font-outfit" style={{ fontSize: '0.75rem', color: '#9ca3af' }}>or</span>
-            <div style={{ flex: 1, height: '1px', background: 'rgba(26,11,46,0.08)' }} />
+          {/* Toggle link */}
+          <div style={{ textAlign: 'center', marginTop: '24px' }}>
+            <p className="font-outfit" style={{ fontSize: '0.85rem', color: '#6b7280' }}>
+              {isLoginMode ? "Don't have an account?" : 'Already have an account?'}
+              <button
+                onClick={() => { setIsLoginMode(!isLoginMode); setError(''); }}
+                className="font-outfit"
+                style={{ background: 'none', border: 'none', color: 'var(--jw-coral)', fontWeight: 700, cursor: 'pointer', marginLeft: '4px' }}
+              >
+                {isLoginMode ? 'Sign Up' : 'Sign In'}
+              </button>
+            </p>
           </div>
-
-          {/* Toggle mode */}
-          <p className="font-outfit" style={{
-            textAlign: 'center', fontSize: '0.9rem', color: '#6b7280',
-          }}>
-            {mode === 'login' ? (
-              <>
-                Don&apos;t have an account?{' '}
-                <button
-                  type="button"
-                  onClick={() => { setMode('signup'); setError(''); }}
-                  style={{
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    color: 'var(--jw-coral)', fontWeight: 700, fontSize: '0.9rem',
-                    fontFamily: 'var(--font-outfit)',
-                  }}
-                >
-                  Sign up
-                </button>
-              </>
-            ) : (
-              <>
-                Already have an account?{' '}
-                <button
-                  type="button"
-                  onClick={() => { setMode('login'); setError(''); }}
-                  style={{
-                    background: 'none', border: 'none', cursor: 'pointer',
-                    color: 'var(--jw-coral)', fontWeight: 700, fontSize: '0.9rem',
-                    fontFamily: 'var(--font-outfit)',
-                  }}
-                >
-                  Sign in
-                </button>
-              </>
-            )}
-          </p>
         </div>
-
-        {/* Back to home */}
-        <p className="font-outfit" style={{
-          textAlign: 'center', marginTop: '24px', fontSize: '0.8rem', color: '#9ca3af',
-        }}>
-          <Link to="/" style={{ color: '#9ca3af', textDecoration: 'none' }}>
-            ← Back to JobWise
-          </Link>
-        </p>
-      </div>
+      </motion.div>
     </div>
   );
 };
