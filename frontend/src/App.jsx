@@ -34,9 +34,9 @@ function App() {
             <Route path="/dashboard" element={<RequireProfile role="candidate"><CandidateDashboard /></RequireProfile>} />
             <Route path="/employer" element={<RequireProfile role="employer"><EmployerDashboard /></RequireProfile>} />
 
-            {/* Profile edit */}
-            <Route path="/profile/candidate" element={<RequireProfile role="candidate"><CandidateProfile /></RequireProfile>} />
-            <Route path="/profile/employer" element={<RequireProfile role="employer"><EmployerProfile /></RequireProfile>} />
+            {/* Profile edit — requires login only (accessible during onboarding) */}
+            <Route path="/profile/candidate" element={<RequireAuth><CandidateProfile /></RequireAuth>} />
+            <Route path="/profile/employer" element={<RequireAuth><EmployerProfile /></RequireAuth>} />
           </Routes>
         </BrowserRouter>
       </AuthProvider>

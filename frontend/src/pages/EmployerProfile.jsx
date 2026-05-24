@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/useAuth';
 import apiClient from '../api/client';
 import Navbar from '../components/Navbar';
-import { Building2, FileText, ArrowLeft, CheckCircle } from 'lucide-react';
+import { Buildings, ArrowLeft, CheckCircle } from '@phosphor-icons/react';
 
 const EmployerProfile = () => {
   const navigate = useNavigate();
@@ -15,11 +15,6 @@ const EmployerProfile = () => {
   const [companyName, setCompanyName] = useState('');
   const [companyDescription, setCompanyDescription] = useState('');
 
-  useEffect(() => {
-    if (!user) { navigate('/login'); return; }
-    fetchProfile();
-  }, []);
-
   const fetchProfile = async () => {
     try {
       const res = await apiClient.get('/employer/my-profile');
@@ -28,6 +23,12 @@ const EmployerProfile = () => {
     } catch { /* no profile */ }
     finally { setLoading(false); }
   };
+
+  /* eslint-disable react-hooks/set-state-in-effect */
+  useEffect(() => {
+    if (user) fetchProfile();
+  }, [user]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -68,13 +69,13 @@ const EmployerProfile = () => {
 
         <button onClick={() => navigate('/employer')} className="font-outfit"
           style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 16px', borderRadius: '9999px', background: 'transparent', border: '1.5px solid rgba(26,11,46,0.1)', cursor: 'pointer', color: 'var(--jw-dark)', fontWeight: 600, marginBottom: '24px', fontSize: '0.85rem' }}>
-          <ArrowLeft size={16} /> Back to Dashboard
+          <ArrowLeft weight="duotone" size={16} /> Back to Dashboard
         </button>
 
         <div className="glass-card" style={{ padding: '40px', borderRadius: '24px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
             <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: 'rgba(26,11,46,0.06)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Building2 size={24} color="var(--jw-dark)" />
+              <Buildings size={24} color="var(--jw-dark)" />
             </div>
             <div>
               <h1 className="font-bricolage" style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--jw-dark)' }}>Company Profile</h1>
@@ -83,7 +84,7 @@ const EmployerProfile = () => {
           </div>
 
           {error && <div className="font-outfit" style={{ padding: '12px 16px', borderRadius: '12px', marginBottom: '20px', background: 'rgba(255,107,107,0.08)', border: '1px solid rgba(255,107,107,0.2)', color: '#C62828', fontSize: '0.85rem' }}>{error}</div>}
-          {success && <div className="font-outfit" style={{ padding: '12px 16px', borderRadius: '12px', marginBottom: '20px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', color: '#059669', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}><CheckCircle size={16} /> {success}</div>}
+          {success && <div className="font-outfit" style={{ padding: '12px 16px', borderRadius: '12px', marginBottom: '20px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)', color: '#059669', fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px' }}><CheckCircle weight="duotone" size={16} /> {success}</div>}
 
           <form onSubmit={handleSave}>
             <div style={{ marginBottom: '20px' }}>
@@ -98,7 +99,7 @@ const EmployerProfile = () => {
             </div>
             <button type="submit" disabled={saving} className="btn-coral font-outfit"
               style={{ display: 'flex', alignItems: 'center', gap: '6px', opacity: saving ? 0.6 : 1 }}>
-              {saving ? 'Saving...' : <><CheckCircle size={16} /> Save Changes</>}
+              {saving ? 'Saving...' : <><CheckCircle weight="duotone" size={16} /> Save Changes</>}
             </button>
           </form>
         </div>
