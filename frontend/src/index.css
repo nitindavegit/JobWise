@@ -570,9 +570,160 @@ button, input, textarea, select {
   white-space: nowrap;
 }
 
-/* ─── Responsive defaults ─── */
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE SYSTEM — Desktop-first with mobile overrides
+   Desktop = generous padding, premium layout
+   Mobile  = tighter but safe padding, no border-hugging
+   ═══════════════════════════════════════════════════ */
+
+/* ── Form Card (Auth + Onboarding) ── 
+   Desktop: 40px padding, glass card with border/shadow
+   Mobile:  24px padding, same visual treatment */
+.jw-form-card {
+  padding: 40px;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 12px 40px rgba(26, 11, 46, 0.10);
+}
+
+/* ── Dashboard Main Content Area ──
+   Desktop: generous padding for readability
+   Mobile:  safe padding so content doesn't touch edges */
+.jw-main-content {
+  padding: 36px 40px 60px;
+}
+
+/* ── Generic Page Content (JobDetail, etc.) ──
+   Desktop: 32px horizontal padding
+   Mobile:  20px horizontal padding */
+.jw-page-content {
+  padding-left: 32px;
+  padding-right: 32px;
+}
+
+/* ── JobDetail cards ── */
+.jw-detail-card {
+  padding: 32px;
+  border-radius: 24px;
+  margin-bottom: 24px;
+}
+
+/* ── Landing sections — override inline 40px on mobile ── */
+.jw-landing-section {
+  /* No desktop override needed — inline styles handle it */
+}
+
+/* ═══ MOBILE: max-width 768px ═══ */
 @media (max-width: 768px) {
+  /* Nav pill links */
   .jw-nav-pill-link { font-size: 0.85rem; padding: 5px 10px; }
+
+  /* Auth page outer container */
+  .jw-auth-page {
+    padding: 24px 16px !important;
+  }
+
+  /* Form cards (Auth + Onboarding) */
+  .jw-form-card {
+    padding: 24px 20px;
+    border-radius: 22px;
+  }
+
+  /* Dashboard main content */
+  .jw-main-content {
+    padding: 24px 20px 40px;
+  }
+
+  /* Page content containers */
+  .jw-page-content {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  /* JobDetail cards */
+  .jw-detail-card {
+    padding: 20px 18px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+
+  /* Landing page sections: override hardcoded 40px padding */
+  section[style*="padding"] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* Landing hero inner container */
+  div[style*="padding: 0 40px"],
+  div[style*="padding: '0 40px'"] {
+    padding-left: 20px !important;
+    padding-right: 20px !important;
+  }
+
+  /* CTA banner: tighten on mobile */
+  section[style*="padding: '0 40px"] > div > div {
+    padding: 40px 24px !important;
+    border-radius: 28px !important;
+  }
+
+  /* Testimonial / glass cards */
+  .glass-card {
+    padding: 24px !important;
+    border-radius: 22px !important;
+  }
+
+  /* Bento grid cards */
+  div[style*="padding: '40px 36px'"],
+  div[style*="padding: '32px 28px'"] {
+    padding: 24px 20px !important;
+  }
+
+  /* Stats grid: minimum card width for small screens */
+  div[style*="gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))'"] {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)) !important;
+    gap: 12px !important;
+  }
+
+  /* Pro cards (dashboard stat tiles) */
+  .pro-card {
+    padding: 16px 18px !important;
+    border-radius: 14px !important;
+  }
+
+  /* Typography scale-down for mobile */
+  h1 {
+    font-size: clamp(1.5rem, 5vw, 1.75rem) !important;
+  }
+}
+
+/* ═══ SMALL MOBILE: max-width 400px ═══ */
+@media (max-width: 400px) {
+  .jw-auth-page {
+    padding: 20px 12px !important;
+  }
+
+  .jw-form-card {
+    padding: 20px 16px;
+    border-radius: 20px;
+  }
+
+  .jw-main-content {
+    padding: 20px 16px 36px;
+  }
+
+  .jw-page-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .jw-detail-card {
+    padding: 18px 14px;
+  }
+
+  section[style*="padding"] {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
 }
 
 /* ─── Password input fix ─── */

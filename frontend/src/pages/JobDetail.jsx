@@ -88,7 +88,7 @@ const JobDetail = () => {
     <div style={{ minHeight: '100vh', background: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)' }}>
       <Navbar />
       
-      <div className="pt-[100px] pb-[60px] px-5 md:px-8 max-w-[900px] mx-auto">
+      <div className="jw-page-content" style={{ maxWidth: '900px', margin: '0 auto', paddingTop: '100px', paddingBottom: '60px' }}>
         {/* Back Button */}
         <motion.button
           initial={{ opacity: 0, x: -20 }}
@@ -105,7 +105,7 @@ const JobDetail = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="glass-card p-6 md:p-8 rounded-[24px] mb-6"
+          className="glass-card jw-detail-card"
           style={{}}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '20px' }}>
@@ -148,7 +148,7 @@ const JobDetail = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="glass-card p-6 md:p-8 rounded-[24px] mb-6"
+          className="glass-card jw-detail-card"
           style={{}}
         >
           <h2 className="font-bricolage" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--jw-dark)', marginBottom: '16px' }}>
@@ -165,7 +165,7 @@ const JobDetail = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
-            className="glass-card p-6 md:p-8 rounded-[24px] mb-6"
+            className="glass-card jw-detail-card"
             style={{}}
           >
             <h2 className="font-bricolage" style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--jw-dark)', marginBottom: '16px' }}>

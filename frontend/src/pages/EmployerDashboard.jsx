@@ -199,7 +199,7 @@ const EmployerDashboard = () => {
         </aside>
 
         {/* MAIN */}
-        <main className="flex-1 min-w-0" style={{ padding: '36px 5vw 60px', maxWidth: '1000px', margin: '0 auto' }}>
+        <main className="flex-1 min-w-0 jw-main-content" style={{ maxWidth: '1000px', margin: '0 auto' }}>
           <div style={{ marginBottom: '32px' }}>
             <h1 className="font-bricolage" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--pro-text-main)', marginBottom: '6px' }}>
               Welcome back, {user?.first_name || user?.user_name || 'Employer'}!

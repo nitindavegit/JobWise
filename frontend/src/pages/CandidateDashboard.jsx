@@ -225,7 +225,7 @@ const CandidateDashboard = () => {
                 </aside>
 
                 {/* MAIN */}
-                <main className="flex-1 min-w-0" style={{ padding: '36px 5vw 60px' }}>
+                <main className="flex-1 min-w-0 jw-main-content">
                     <div style={{ marginBottom: '32px' }}>
                         <h1 className="font-bricolage" style={{ fontSize: '1.75rem', fontWeight: 800, color: 'var(--pro-text-main)', marginBottom: '6px' }}>
                             Welcome back, {user?.first_name || user?.user_name || 'Candidate'}!

@@ -171,7 +171,7 @@ const CandidateOnboarding = () => {
     <div style={{
       minHeight: '100vh', backgroundImage: 'var(--mesh-bg)', backgroundColor: 'var(--jw-bg)',
       display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-      padding: '40px 20px', position: 'relative', overflow: 'hidden',
+      padding: '40px 24px', position: 'relative', overflow: 'hidden',
     }}>
       {/* Blobs */}
       <div style={{ position: 'absolute', top: '-60px', left: '-60px', width: '400px', height: '400px', borderRadius: '50%', background: 'var(--jw-lavender)', opacity: 0.25, filter: 'blur(100px)', pointerEvents: 'none' }} />
@@ -182,7 +182,7 @@ const CandidateOnboarding = () => {
           <Link to="/"><Logo size="xl" /></Link>
         </div>
 
-        <div className="p-6 md:p-10 rounded-[28px] border border-white/60 shadow-[0_16px_64px_rgba(26,11,46,0.10)]" style={{
+        <div className="jw-form-card" style={{
           background: 'rgba(255,255,255,0.75)', backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)'
         }}>

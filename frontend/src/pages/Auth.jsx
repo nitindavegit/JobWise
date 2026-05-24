@@ -83,7 +83,7 @@ const Auth = ({ isSignup = false }) => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
+    <div className="jw-auth-page" style={{ minHeight: '100vh', background: 'var(--jw-bg)', backgroundImage: 'var(--mesh-bg)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '40px 20px' }}>
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
@@ -101,7 +101,7 @@ const Auth = ({ isSignup = false }) => {
         </div>
 
         {/* Form Card */}
-        <div className="p-6 md:p-10 rounded-[28px] border border-white/60 shadow-[0_12px_40px_rgba(26,11,46,0.10)]" style={{
+        <div className="jw-form-card" style={{
           background: 'rgba(255,255,255,0.75)',
           backdropFilter: 'blur(24px)',
           WebkitBackdropFilter: 'blur(24px)',
