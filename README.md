@@ -1,96 +1,109 @@
-# JobWise
+# JobWise 🚀
 
-JobWise is a FastAPI backend for candidate-employer job matching.
+JobWise is a next-generation, automated hiring platform that seamlessly connects employers with top-tier candidates. Built with a stunning, modern React frontend and a robust FastAPI backend, JobWise automatically parses resumes, calculates algorithmic match scores, and provides a buttery-smooth SaaS user experience.
 
-It supports:
-- user signup and login with JWT auth
-- candidate profile update and resume upload (PDF to text)
-- employer profile update
-- job creation, listing, and status updates
-- basic recommendation endpoint based on skill/text overlap
+---
 
-## Current Status
+## ✨ Features
 
-- Core backend APIs are implemented and running.
-- Database models and Alembic migrations are present.
-- Recommendation logic exists as a basic MVP.
-- Test coverage and production hardening are still pending.
+### For Candidates
+*   **Intelligent Onboarding:** Upload your resume (PDF) and JobWise automatically parses your skills and text using PyPDF2.
+*   **Smart Match Dashboard:** Instantly view jobs sorted by a dynamic Match Score algorithm comparing your parsed skills against the employer's requirements.
+*   **One-Click Apply:** Premium UI interactions let you apply for jobs seamlessly.
 
-## Tech Stack
+### For Employers
+*   **Job Management:** Create, edit, and manage job listings with custom salary ranges and skill arrays.
+*   **Applicant Tracking:** View beautifully formatted applicant cards featuring match scores, dynamic statuses (Applied, Reviewing, Accepted, Rejected), and quick-action controls.
 
-- FastAPI
-- SQLAlchemy
-- Alembic
-- PostgreSQL
-- Pydantic Settings
+### Technical & UI Highlights
+*   **Unified Design System:** A strictly enforced CSS architecture utilizing CSS Variables (`index.css`) for flawless cross-component consistency (Dark Slate, Coral, Emerald accents).
+*   **Premium Interactions:** Physics-based CSS hover transitions for a 60fps "Framer Motion" style premium feel.
+*   **Secure Auth:** JWT-based authentication using bcrypt hashing. Accounts are strictly validated (lowercased, spaceless usernames) and secured via Email login.
 
-## Quick Start (Windows / PowerShell)
+---
 
-1. Create and activate virtual environment
+## 🛠️ Tech Stack
 
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
+**Frontend:**
+*   React (Vite)
+*   React Router DOM
+*   Phosphor Icons (Premium UI assets)
+*   Vanilla CSS (CSS Variables Design System architecture)
 
-2. Install dependencies
+**Backend:**
+*   FastAPI (Python)
+*   SQLAlchemy (ORM) & Alembic (Migrations)
+*   PostgreSQL
+*   PyPDF2 (Resume parsing)
+*   Passlib & python-jose (JWT Auth)
 
-```powershell
-pip install -r requirements.txt
-```
+---
 
-3. Create your environment file
+## 💻 Local Development Setup
 
-```powershell
-copy .env.example .env
-```
+### 1. Backend Setup
 
-Then update `.env` values for your local PostgreSQL setup.
+1. Open a terminal in the root directory and create a virtual environment:
+   ```bash
+   python -m venv .venv
+   .\.venv\Scripts\Activate.ps1  # Windows
+   # source .venv/bin/activate    # Mac/Linux
+   ```
 
-4. Run database migrations
+2. Install backend dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-```powershell
-alembic upgrade head
-```
+3. Setup your PostgreSQL Database & Environment Variables:
+   * Copy `.env.example` to `.env`.
+   * Update the `DATABASE_URL` to point to your local PostgreSQL instance.
 
-5. (Optional) Seed sample data
+4. Run database migrations to build the tables:
+   ```bash
+   alembic upgrade head
+   ```
 
-```powershell
-python seeds.py
-```
+5. Start the FastAPI server:
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+   *(Backend runs on `http://localhost:8000`. Swagger API docs available at `http://localhost:8000/docs`)*
 
-6. Start API server
+### 2. Frontend Setup
 
-```powershell
-uvicorn app.main:app --reload
-```
+1. Open a **new** terminal and navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
 
-Swagger docs: `http://127.0.0.1:8000/docs`
+2. Install Node dependencies:
+   ```bash
+   npm install
+   ```
 
-## Main API Endpoints
+3. Start the Vite React development server:
+   ```bash
+   npm run dev
+   ```
+   *(Frontend runs on `http://localhost:5173`)*
 
-- `GET /`
-- `POST /user/`
-- `POST /login`
-- `PATCH /candidate/update-profile`
-- `GET /candidate/my-profile`
-- `POST /candidate/upload-resume`
-- `GET /candidate/recommend-jobs`
-- `PATCH /employer/update-profile`
-- `GET /employer/my-profile`
-- `POST /job/create-job`
-- `GET /job/my-jobs`
-- `PATCH /job/update-job-status/{job_id}`
+---
 
-## Auth Notes
+## 🚀 Production Deployment & Mock Data
 
-- Use `/login` to get `access_token`.
-- In Swagger, click `Authorize` and send token as `Bearer <token>`.
-- Role checks are enforced per route (`candidate` vs `employer`).
+When deploying JobWise to a live production environment (e.g., Vercel + Render + Supabase Postgres), your database will start completely empty. 
 
-## Next Development Priorities
+We have provided a brilliant automated **Live Seeder** strategy to instantly populate your live site for demonstrations:
 
-1. Add integration tests for auth, profiles, jobs, and recommendations.
-2. Improve recommendation quality (ranking/scoring).
-3. Add `.env` validation and clearer startup errors.
-4. Add deployment and CI instructions.
+1. **Sign Up Live:** Go to your hosted website and manually sign up two users:
+   * **Employer:** Username: `jhonnykhanna`, Email: `jhonnykhanna@gmail.com`, Password: `Jhonnykhanna1@gmail.com`
+   * **Candidate:** Username: `sofiasharma`, Email: `sofiasharma@gmail.com`, Password: `Sofiasharma1@gmail.com`
+   *(This ensures your production server securely bcrypts their passwords and generates valid JWT tokens natively).*
+
+2. **Run the Seeder:** Open your production database console (e.g., Supabase SQL Editor or pgAdmin). Copy the entire contents of the **`live_seeder.sql`** file located in the root of this repository, paste it into the editor, and run it.
+
+3. **Magic!** The SQL script will dynamically locate Jhonny and Sofia by their emails, perfectly inject their company profiles, generate 3 professional jobs, and automatically simulate applications between them with precise Match Scores!
+
+---
+*Built with ❤️ for the future of hiring.*
