@@ -109,6 +109,7 @@ class JobResponse(JobBase):
 
 class JobRecommendationResponse(JobResponse):
     match_score : int
+    company_name : Optional[str] = None
         
 # changing job status
 class JobStatusChange(BaseModel):
@@ -139,6 +140,7 @@ class ApplicationResponse(BaseModel):
     candidate_id : int
     job_id : int
     status : ApplicationStatusEnum
+    match_score : Optional[float] = None
     applied_at : datetime
     updated_at : datetime
     
@@ -154,7 +156,6 @@ class ApplicationWithJobResponse(ApplicationResponse):
 class ApplicationWithCandidateResponse(ApplicationResponse):
     candidate_name : Optional[str] = None
     candidate_email : Optional[str] = None
-    match_score : Optional[float] = None
 
 # Employer changes application status
 class ApplicationStatusChange(BaseModel):
@@ -179,6 +180,9 @@ class CandidateProfileResponse(BaseModel):
 class CandidateProfileChange(BaseModel):
     resume_text : Optional[str] = None
     skills : Optional[List[str]] = None
+    first_name : Optional[str] = None
+    last_name : Optional[str] = None
+    profile_picture_url : Optional[str] = None
     
 
 # Employer Profile Response
@@ -197,8 +201,9 @@ class EmployerProfileResponse(BaseModel):
 class EmployerProfileChange(BaseModel):
     company_name : Optional[str] = None
     company_description : Optional[str] = None
-    
-    
+    first_name : Optional[str] = None
+    last_name : Optional[str] = None
+    profile_picture_url : Optional[str] = None
     
     
 
@@ -213,6 +218,9 @@ class UserMeResponse(BaseModel):
     user_email : EmailStr
     user_type : UserType
     profile_completed : bool
+    first_name : Optional[str] = None
+    last_name : Optional[str] = None
+    profile_picture_url : Optional[str] = None
 
     class Config:
         from_attributes = True

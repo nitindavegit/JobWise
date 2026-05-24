@@ -18,11 +18,19 @@ router = APIRouter(
 async def update_employer_profile(profile : schemas.EmployerProfileChange, db: Session = Depends(get_db), current_user: user_models.User = Depends(oauth2.get_current_user)):
     if current_user.user_type != "employer":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only employers can update this profile.")
+    profile_data = profile.model_dump(exclude_unset=True)
+    
+    # Extract user fields
+    user_fields = ["first_name", "last_name", "profile_picture_url"]
+    for field in user_fields:
+        if field in profile_data:
+            setattr(current_user, field, profile_data.pop(field))
+
       # Check if employer profile already exists
     existing_profile = db.query(employer_models.Employer).filter(employer_models.Employer.user_id == current_user.user_id).first()
     if existing_profile:
         # Update existing profile
-        for key, value in profile.model_dump(exclude_unset=True).items():
+        for key, value in profile_data.items():
             setattr(existing_profile, key, value)
         db.commit()
         db.refresh(existing_profile)
@@ -30,7 +38,7 @@ async def update_employer_profile(profile : schemas.EmployerProfileChange, db: S
     
     else :
         # Create new profile
-        new_profile = employer_models.Employer(**profile.model_dump())
+        new_profile = employer_models.Employer(**profile_data)
         new_profile.user_id = current_user.user_id
         db.add(new_profile)
         db.commit()
@@ -45,6 +53,9 @@ async def update_employer_profile(profile : schemas.EmployerProfileChange, db: S
         "user_type": current_user.user_type,
         "user_name": current_user.user_name,
         "user_email": current_user.user_email,
+        "first_name": current_user.first_name,
+        "last_name": current_user.last_name,
+        "profile_picture_url": current_user.profile_picture_url,
         "company_name": result_profile.company_name,
         "company_description": result_profile.company_description
     }
@@ -63,6 +74,9 @@ async def get_employer_profile(db: Session = Depends(get_db), current_user: user
         "user_type": current_user.user_type,
         "user_name": current_user.user_name,
         "user_email": current_user.user_email,
+        "first_name": current_user.first_name,
+        "last_name": current_user.last_name,
+        "profile_picture_url": current_user.profile_picture_url,
         "company_name": profile.company_name,
         "company_description": profile.company_description
     }

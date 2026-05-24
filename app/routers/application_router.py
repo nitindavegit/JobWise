@@ -10,7 +10,7 @@ from app.db.models import employer as employer_models
 from app.db.models import job as job_models
 from app.db.models import application as app_models
 from app.db.database import get_db
-from app import schemas
+from app import schemas, utils
 
 router = APIRouter(
     prefix="/application",
@@ -38,10 +38,25 @@ async def apply_to_job(job_id: int, db: Session = Depends(get_db), current_user:
     if job.job_status != "open":
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="This job is not currently accepting applications")
     
+    # Calculate and store match score at time of application
+    candidate_text_parts = []
+    if candidate.resume_text:
+        candidate_text_parts.append(candidate.resume_text)
+    if candidate.skills:
+        candidate_text_parts.append(" ".join(candidate.skills))
+    candidate_combined_text = " ".join(candidate_text_parts).strip()
+
+    score = utils.calculate_tfidf_match_score(
+        candidate_combined_text,
+        job.job_description,
+        job.skills_required or []
+    )
+
     # Create application (unique constraint prevents duplicates)
     new_application = app_models.Application(
         candidate_id=candidate.candidate_id,
         job_id=job_id,
+        match_score=float(score),
     )
     try:
         db.add(new_application)
@@ -56,7 +71,12 @@ async def apply_to_job(job_id: int, db: Session = Depends(get_db), current_user:
 
 # Candidate views their applications (with job details)
 @router.get("/my-applications", response_model=List[schemas.ApplicationWithJobResponse])
-async def get_my_applications(db: Session = Depends(get_db), current_user: user_models.User = Depends(oauth2.get_current_user)):
+async def get_my_applications(
+    page: int = 1,
+    limit: int = 20,
+    db: Session = Depends(get_db),
+    current_user: user_models.User = Depends(oauth2.get_current_user)
+):
     if current_user.user_type != "candidate":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only candidates can view their applications")
     
@@ -65,10 +85,14 @@ async def get_my_applications(db: Session = Depends(get_db), current_user: user_
     ).first()
     if not candidate:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Candidate profile not found")
+
+    limit = max(1, min(limit, 100))
+    page = max(1, page)
+    offset = (page - 1) * limit
     
     applications = db.query(app_models.Application).filter(
         app_models.Application.candidate_id == candidate.candidate_id
-    ).order_by(app_models.Application.applied_at.desc()).all()
+    ).order_by(app_models.Application.applied_at.desc()).offset(offset).limit(limit).all()
     
     # Enrich with job title and company name
     result = []
@@ -123,6 +147,7 @@ async def get_job_applicants(job_id: int, db: Session = Depends(get_db), current
         app_data = schemas.ApplicationWithCandidateResponse.model_validate(app)
         app_data.candidate_name = user.user_name if user else None
         app_data.candidate_email = user.user_email if user else None
+        # match_score is already stored on the application record
         result.append(app_data)
     
     return result

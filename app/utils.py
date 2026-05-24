@@ -99,6 +99,7 @@ def match_candidate_to_job(candidate_id: int, db: Session, limit: int = 10):
         if score > 0: # Only return jobs with at least some match
             job_data = schemas.JobResponse.model_validate(job).model_dump()
             job_data['match_score'] = score
+            job_data['company_name'] = job.employer.company_name if job.employer else None
             scored_jobs.append(job_data)
             
     # Sort by score desc

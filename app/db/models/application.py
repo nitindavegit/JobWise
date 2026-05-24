@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, UniqueConstraint
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, UniqueConstraint, Float
 from sqlalchemy.orm import relationship
 from app.db.database import Base
 from sqlalchemy.sql import func
@@ -17,6 +17,7 @@ class Application(Base):
     candidate_id = Column(Integer, ForeignKey('candidates.candidate_id'), nullable=False)
     job_id = Column(Integer, ForeignKey('jobs.job_id'), nullable=False)
     status = Column(Enum(ApplicationStatus), default=ApplicationStatus.applied, nullable=False)
+    match_score = Column(Float, nullable=True)  # TF-IDF score at time of application
     applied_at = Column(DateTime(timezone=True), server_default=func.now(), default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), default=func.now(), onupdate=func.now(), nullable=False)
     
