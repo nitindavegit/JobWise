@@ -613,11 +613,35 @@ button, input, textarea, select {
   /* No desktop override needed — inline styles handle it */
 }
 
+/* ── Mobile-only elements: hidden on desktop, shown on mobile ── */
+.jw-mobile-avatar,
+.jw-mobile-hamburger,
+.jw-dash-mobile-toggle {
+  display: none !important;
+}
+
 /* ═══ MOBILE: max-width 768px ═══ */
 @media (max-width: 768px) {
+  /* Show mobile-only elements */
+  .jw-mobile-avatar {
+    display: flex !important;
+  }
+
+  .jw-mobile-hamburger {
+    display: flex !important;
+  }
+
+  .jw-dash-mobile-toggle {
+    display: flex !important;
+  }
+
+  /* Hide desktop-only auth section in navbar */
+  .hidden.md\:flex {
+    display: none !important;
+  }
+
   /* Nav pill links */
   .jw-nav-pill-link { font-size: 0.85rem; padding: 5px 10px; }
-
   /* Auth page outer container */
   .jw-auth-page {
     padding: 24px 16px !important;

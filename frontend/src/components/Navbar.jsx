@@ -198,9 +198,39 @@ const Navbar = () => {
           )}
         </div>
 
+        {/* ─── Mobile: show avatar if logged in ─── */}
+        {user && (
+          <Link
+            to="/dashboard"
+            className="jw-mobile-avatar"
+            aria-label={`Profile — ${user.user_name}`}
+            style={{
+              width: '32px',
+              height: '32px',
+              borderRadius: '50%',
+              overflow: 'hidden',
+              display: 'none',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textDecoration: 'none',
+              flexShrink: 0,
+              border: `2px solid ${CORAL}`,
+              background: user?.profile_picture_url ? 'transparent' : CORAL,
+              color: '#ffffff',
+              fontWeight: 700,
+              fontSize: '0.7rem',
+              fontFamily: 'inherit',
+            }}
+          >
+            {user?.profile_picture_url ? (
+              <img src={user.profile_picture_url} alt={initials} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            ) : initials}
+          </Link>
+        )}
+
         {/* ─── Mobile hamburger ─── */}
         <button
-          className="md:hidden flex items-center justify-center shrink-0"
+          className="jw-mobile-hamburger"
           style={{
             width         : '40px',
             height        : '40px',
@@ -210,6 +240,10 @@ const Navbar = () => {
             color          : MUTED,
             cursor         : 'pointer',
             padding        : 0,
+            display        : 'none',
+            alignItems     : 'center',
+            justifyContent : 'center',
+            flexShrink     : 0,
           }}
           onClick={() => setMobileOpen((v) => !v)}
           aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
