@@ -24,9 +24,9 @@ export const AuthProvider = ({ children }) => {
     }
   }, [token]);
 
-  const login = async (username, password) => {
+  const login = async (email, password) => {
     const response = await apiClient.post('/login', {
-      user_name: username,
+      user_email: email,
       user_password: password,
     });
     const { access_token } = response.data;
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     });
 
     // Auto-login after signup
-    return await login(username, password);
+    return await login(email, password);
   };
 
   const logout = () => {

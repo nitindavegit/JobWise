@@ -24,7 +24,7 @@ class UserBase(BaseModel):
     
 # for login
 class UserLogin(BaseModel):
-    user_name : str
+    user_email : EmailStr
     user_password : str
     
 # for creating new user  

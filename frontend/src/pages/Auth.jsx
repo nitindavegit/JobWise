@@ -49,7 +49,7 @@ const Auth = ({ isSignup = false }) => {
     setError('');
     try {
       if (isLoginMode) {
-        const userData = await login(formData.user_name, formData.user_password);
+        const userData = await login(formData.user_email, formData.user_password);
         // Redirect based on profile state
         if (!userData.profile_completed) {
           navigate(`/onboarding/${userData.user_type}`);
@@ -200,24 +200,7 @@ const Auth = ({ isSignup = false }) => {
           </AnimatePresence>
 
           <form onSubmit={handleSubmit}>
-            {/* Username */}
-            <div style={{ marginBottom: '16px' }}>
-              <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--jw-dark)', marginBottom: '8px' }}>
-                Username
-              </label>
-              <input
-                type="text"
-                value={formData.user_name}
-                onChange={(e) => setFormData({ ...formData, user_name: e.target.value.toLowerCase() })}
-                placeholder="Enter your username"
-                style={inputStyle}
-                onFocus={(e) => { e.target.style.borderColor = 'var(--jw-coral)'; e.target.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)'; }}
-                onBlur={(e) => { e.target.style.borderColor = 'rgba(26,11,46,0.1)'; e.target.style.boxShadow = 'none'; }}
-                required
-              />
-            </div>
-
-            {/* Email - Sign Up only */}
+            {/* Username - Sign Up only */}
             <AnimatePresence>
               {!isLoginMode && (
                 <motion.div
@@ -227,13 +210,13 @@ const Auth = ({ isSignup = false }) => {
                   style={{ overflow: 'hidden', marginBottom: '16px' }}
                 >
                   <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--jw-dark)', marginBottom: '8px' }}>
-                    Email
+                    Username
                   </label>
                   <input
-                    type="email"
-                    value={formData.user_email}
-                    onChange={(e) => setFormData({ ...formData, user_email: e.target.value })}
-                    placeholder="you@example.com"
+                    type="text"
+                    value={formData.user_name}
+                    onChange={(e) => setFormData({ ...formData, user_name: e.target.value.toLowerCase().replace(/\s/g, '') })}
+                    placeholder="Enter a unique username"
                     style={inputStyle}
                     onFocus={(e) => { e.target.style.borderColor = 'var(--jw-coral)'; e.target.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)'; }}
                     onBlur={(e) => { e.target.style.borderColor = 'rgba(26,11,46,0.1)'; e.target.style.boxShadow = 'none'; }}
@@ -242,6 +225,23 @@ const Auth = ({ isSignup = false }) => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Email - Both Modes */}
+            <div style={{ marginBottom: '16px' }}>
+              <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--jw-dark)', marginBottom: '8px' }}>
+                Email
+              </label>
+              <input
+                type="email"
+                value={formData.user_email}
+                onChange={(e) => setFormData({ ...formData, user_email: e.target.value })}
+                placeholder="you@example.com"
+                style={inputStyle}
+                onFocus={(e) => { e.target.style.borderColor = 'var(--jw-coral)'; e.target.style.boxShadow = '0 0 0 4px rgba(255,107,107,0.1)'; }}
+                onBlur={(e) => { e.target.style.borderColor = 'rgba(26,11,46,0.1)'; e.target.style.boxShadow = 'none'; }}
+                required
+              />
+            </div>
 
             {/* Password */}
             <div style={{ marginBottom: !isLoginMode ? '16px' : '28px', position: 'relative' }}>

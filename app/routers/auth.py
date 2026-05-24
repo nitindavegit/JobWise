@@ -14,7 +14,7 @@ router = APIRouter(
 
 @router.post("/login", response_model=schemas.Token)
 async def login(user_credentials: schemas.UserLogin, db: Session = Depends(get_db)):
-    user = db.query(user_model.User).filter(user_model.User.user_name == user_credentials.user_name).first()
+    user = db.query(user_model.User).filter(user_model.User.user_email == user_credentials.user_email).first()
     if not user:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid Credentials")
     if not utils.verify(user_credentials.user_password, user.user_password):

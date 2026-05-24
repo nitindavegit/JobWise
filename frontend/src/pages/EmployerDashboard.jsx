@@ -412,48 +412,52 @@ const EmployerDashboard = () => {
                     const Icon = cfg.icon;
                     return (
                       <div key={app.application_id} className="pro-card" style={{ padding: '20px 28px', borderRadius: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
-                        <div>
-                          <h4 className="font-bricolage" style={{ fontSize: '1rem', fontWeight: 700, color: 'var(--pro-text-main)', marginBottom: '4px' }}>
-                            {app.candidate_name || 'Candidate'}
-                          </h4>
-                          <p className="font-outfit" style={{ fontSize: '0.8rem', color: 'rgba(255, 255, 255, 0.7)', marginBottom: '6px' }}>{app.candidate_email}</p>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
-                            <span className="font-outfit" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 700, background: cfg.bg, color: cfg.color }}>
-                              <Icon weight="bold" size={14} /> {cfg.label}
-                            </span>
-                            {app.match_score != null && (
-                              <span className="font-outfit" style={{
-                                display: 'inline-flex', alignItems: 'center', gap: '4px',
-                                padding: '3px 10px', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 700,
-                                background: app.match_score >= 70 ? 'rgba(16,185,129,0.1)' : app.match_score >= 40 ? 'rgba(245,158,11,0.1)' : 'rgba(99,102,241,0.1)',
-                                color: app.match_score >= 70 ? '#059669' : app.match_score >= 40 ? '#D97706' : '#4F46E5',
-                              }}>
-                                {Math.round(app.match_score)}% match
+                        <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                          <div>
+                            <h4 className="font-bricolage" style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--pro-text-main)', marginBottom: '4px' }}>
+                              {app.candidate_name || 'Candidate'}
+                            </h4>
+                            <p className="font-outfit" style={{ fontSize: '0.85rem', color: 'var(--pro-text-muted)', marginBottom: '8px' }}>{app.candidate_email}</p>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                              <span className="font-outfit" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '3px 10px', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 700, background: cfg.bg, color: cfg.color }}>
+                                <Icon weight="bold" size={14} /> {cfg.label}
                               </span>
-                            )}
-                            <span className="font-outfit" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.7rem', color: 'var(--pro-text-muted)' }}>
-                              <Clock weight="duotone" size={14} /> Applied {new Date(app.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                            </span>
+                              {app.match_score != null && (
+                                <span className="font-outfit" style={{
+                                  display: 'inline-flex', alignItems: 'center', gap: '4px',
+                                  padding: '3px 10px', borderRadius: '9999px', fontSize: '0.7rem', fontWeight: 700,
+                                  background: app.match_score >= 70 ? 'rgba(16,185,129,0.1)' : app.match_score >= 40 ? 'rgba(245,158,11,0.1)' : 'rgba(99,102,241,0.1)',
+                                  color: app.match_score >= 70 ? '#059669' : app.match_score >= 40 ? '#D97706' : '#4F46E5',
+                                }}>
+                                  {Math.round(app.match_score)}% match
+                                </span>
+                              )}
+                              <span className="font-outfit" style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: 'var(--pro-text-muted)' }}>
+                                <Clock weight="duotone" size={14} /> Applied {new Date(app.applied_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                        {(app.status === 'applied' || app.status === 'reviewing') && (
-                          <div style={{ display: 'flex', gap: '8px' }}>
-                            {app.status === 'applied' && (
-                              <button onClick={() => handleAppStatus(app.application_id, 'reviewing')} className="font-outfit"
-                                style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '9999px', background: 'rgba(245,158,11,0.08)', border: 'none', color: '#D97706', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
-                                <Eye weight="bold" size={16} /> Review
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                          {(app.status === 'applied' || app.status === 'reviewing') && (
+                            <>
+                              {app.status === 'applied' && (
+                                <button onClick={() => handleAppStatus(app.application_id, 'reviewing')} className="font-outfit"
+                                  style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '9999px', background: 'rgba(245,158,11,0.08)', border: 'none', color: '#D97706', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+                                  <Eye weight="bold" size={16} /> Review
+                                </button>
+                              )}
+                              <button onClick={() => handleAppStatus(app.application_id, 'accepted')} className="font-outfit"
+                                style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '9999px', background: 'rgba(16,185,129,0.08)', border: 'none', color: '#059669', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+                                <CheckCircle weight="bold" size={16} /> Accept
                               </button>
-                            )}
-                            <button onClick={() => handleAppStatus(app.application_id, 'accepted')} className="font-outfit"
-                              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '9999px', background: 'rgba(16,185,129,0.08)', border: 'none', color: '#059669', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
-                              <CheckCircle weight="bold" size={16} /> Accept
-                            </button>
-                            <button onClick={() => handleAppStatus(app.application_id, 'rejected')} className="font-outfit"
-                              style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '9999px', background: 'rgba(239,68,68,0.06)', border: 'none', color: '#DC2626', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
-                              <XCircle weight="bold" size={16} /> Reject
-                            </button>
-                          </div>
-                        )}
+                              <button onClick={() => handleAppStatus(app.application_id, 'rejected')} className="font-outfit"
+                                style={{ display: 'flex', alignItems: 'center', gap: '4px', padding: '8px 14px', borderRadius: '9999px', background: 'rgba(239,68,68,0.06)', border: 'none', color: '#DC2626', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer' }}>
+                                <XCircle weight="bold" size={16} /> Reject
+                              </button>
+                            </>
+                          )}
+                        </div>
                       </div>
                     );
                   })
