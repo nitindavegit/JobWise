@@ -136,7 +136,7 @@ const JobDetail = () => {
             </div>
 
             {job.match_score != null && (
-              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '9999px', background: '#FFFFFF', color: 'var(--jw-dark)', border: '1px solid rgba(26,11,46,0.15)', fontWeight: 700, fontSize: '0.88rem', fontFamily: 'var(--font-outfit)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '6px 14px', borderRadius: '9999px', background: 'var(--pro-match-bg)', color: 'var(--jw-dark)', border: '1px solid var(--pro-match-border)', fontWeight: 700, fontSize: '0.88rem', fontFamily: 'var(--font-outfit)' }}>
                 <Target weight="duotone" size={18} color="var(--jw-dark)" /> {job.match_score}% Match
               </div>
             )}
@@ -200,11 +200,11 @@ const JobDetail = () => {
               className="font-outfit"
               style={{ 
                 padding: '16px 36px', fontSize: '1rem', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: '8px',
-                borderRadius: '9999px', background: '#1F2937', color: '#F9FAFB', border: 'none', cursor: applying ? 'not-allowed' : 'pointer',
+                borderRadius: '9999px', background: 'var(--pro-btn-dark)', color: 'var(--pro-btn-dark-text)', border: 'none', cursor: applying ? 'not-allowed' : 'pointer',
                 opacity: applying ? 0.7 : 1, transition: 'all 0.2s ease'
               }}
-              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(31,41,55,0.15)'; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}
+              onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 20px rgba(31,41,55,0.15)'; e.currentTarget.style.background = 'var(--pro-btn-dark-hover)'; }}
+              onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'var(--pro-btn-dark)'; }}
             >
               {applying ? (
                 <>

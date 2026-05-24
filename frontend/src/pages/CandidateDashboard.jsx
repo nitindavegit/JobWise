@@ -22,7 +22,7 @@ const getCurrencyIcon = (salaryStr) => {
 };
 
 const getScoreStyle = (score) => {
-    return { bg: '#FFFFFF', text: 'var(--jw-dark)', icon: 'var(--jw-dark)', border: '1px solid rgba(26,11,46,0.15)' };
+    return { bg: 'var(--pro-match-bg)', text: 'var(--jw-dark)', icon: 'var(--jw-dark)', border: '1px solid var(--pro-match-border)' };
 };
 
 const STATUS_CONFIG = {
@@ -322,9 +322,9 @@ const CandidateDashboard = () => {
                                                 </span>
                                             ) : (
                                                 <button onClick={() => handleApply(job.job_id)} disabled={applyingId === job.job_id} className="font-outfit"
-                                                    style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, opacity: applyingId === job.job_id ? 0.7 : 1, cursor: applyingId === job.job_id ? 'not-allowed' : 'pointer', padding: '10px 24px', borderRadius: '9999px', background: '#1F2937', color: '#F9FAFB', border: 'none', transition: 'all 0.2s ease' }}
-                                                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(31,41,55,0.15)'; }}
-                                                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; }}>
+                                                    style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.82rem', fontWeight: 600, opacity: applyingId === job.job_id ? 0.7 : 1, cursor: applyingId === job.job_id ? 'not-allowed' : 'pointer', padding: '10px 24px', borderRadius: '9999px', background: 'var(--pro-btn-dark)', color: 'var(--pro-btn-dark-text)', border: 'none', transition: 'all 0.2s ease' }}
+                                                    onMouseEnter={e => { e.currentTarget.style.transform = 'translateY(-1px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(31,41,55,0.15)'; e.currentTarget.style.background = 'var(--pro-btn-dark-hover)'; }}
+                                                    onMouseLeave={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = 'none'; e.currentTarget.style.background = 'var(--pro-btn-dark)'; }}>
                                                     {applyingId === job.job_id
                                                         ? <div style={{ width: '15px', height: '15px', border: '2px solid rgba(255,255,255,0.3)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                                                         : 'Apply Now'}

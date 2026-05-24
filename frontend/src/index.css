@@ -67,6 +67,13 @@
   --pro-text-main: #0F172A;
   --pro-text-muted: #64748B;
   
+  /* Unified UI Tokens */
+  --pro-btn-dark: #1F2937;
+  --pro-btn-dark-hover: #111827;
+  --pro-btn-dark-text: #F9FAFB;
+  --pro-match-bg: #FFFFFF;
+  --pro-match-border: rgba(26,11,46,0.15);
+  
   --mesh-bg: none;
   background-color: var(--pro-bg) !important;
   background-image: none !important;
@@ -102,13 +109,22 @@ html {
 
 body {
   font-family: var(--font-outfit);
-  background: var(--jw-bg);
+  background-color: var(--jw-bg);
+  background-image: var(--mesh-bg);
+  background-size: cover;
+  background-attachment: fixed;
   color: var(--jw-text);
-  line-height: 1.6;
-  min-height: 100vh;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-bricolage);
+}
+
+button, input, textarea, select {
+  font-family: var(--font-outfit);
 }
 
 #root {
