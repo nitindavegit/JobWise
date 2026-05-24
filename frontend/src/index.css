@@ -694,6 +694,24 @@ button, input, textarea, select {
   h1 {
     font-size: clamp(1.5rem, 5vw, 1.75rem) !important;
   }
+
+  /* Footer: stack grid to 2 columns */
+  .jw-footer {
+    padding: 48px 20px 32px !important;
+  }
+
+  .jw-footer-grid {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 32px 24px !important;
+  }
+
+  /* Footer bottom bar: center and stack */
+  .jw-footer-bottom {
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center;
+    gap: 16px !important;
+  }
 }
 
 /* ═══ SMALL MOBILE: max-width 400px ═══ */
@@ -723,6 +741,16 @@ button, input, textarea, select {
   section[style*="padding"] {
     padding-left: 16px !important;
     padding-right: 16px !important;
+  }
+
+  /* Footer: single column on very small screens */
+  .jw-footer {
+    padding: 40px 16px 28px !important;
+  }
+
+  .jw-footer-grid {
+    grid-template-columns: 1fr !important;
+    gap: 28px !important;
   }
 }
 

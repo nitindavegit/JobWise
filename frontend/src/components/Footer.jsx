@@ -25,13 +25,13 @@ const Footer = () => {
 
   return (
     <footer
-      className="section-dark"
+      className="section-dark jw-footer"
       data-testid="footer"
       style={{ padding: '80px 40px 40px' }}
     >
       <div style={{ maxWidth: '1280px', margin: '0 auto' }}>
         {/* Main Footer Content */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '40px' }}>
+        <div className="jw-footer-grid" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '40px' }}>
           {/* Brand Column */}
           <div>
             <motion.div 
@@ -125,6 +125,7 @@ const Footer = () => {
 
         {/* Bottom Bar */}
         <motion.div
+          className="jw-footer-bottom"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
