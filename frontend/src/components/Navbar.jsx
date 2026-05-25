@@ -64,7 +64,7 @@ const Navbar = () => {
     // ── outer shell: fixed, inset from viewport edges ──
     // `flex justify-center` makes the pill sit dead-centre horizontally
     <nav
-      className="fixed top-0 left-0 right-0 z-60 pt-[20px] pb-[20px] flex flex-col items-center"
+      className="jw-navbar-container"
       data-testid="navbar"
       aria-label="Primary navigation"
       style={{

@@ -174,13 +174,12 @@ const CandidateDashboard = () => {
             </AnimatePresence>
 
             {/* ── Layout: sidebar + main ── */}
-            <div className="flex flex-col md:flex-row min-h-screen pt-[64px]">
+            <div className="jw-dashboard-layout">
                 
                 {/* Mobile Menu Toggle */}
                 <div className="jw-dash-mobile-toggle" style={{
                     display: 'none', justifyContent: 'space-between', alignItems: 'center',
                     padding: '14px 20px', background: 'white', borderBottom: '1px solid #e5e7eb', zIndex: 50,
-                    ...(sidebarOpen ? {} : { position: 'sticky', top: '64px' }),
                 }}>
                     <span className="font-bricolage" style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1f2937' }}>{sidebarOpen ? 'Close Menu' : 'Dashboard Menu'}</span>
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ padding: '8px', color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', borderRadius: '8px' }}>
@@ -189,7 +188,7 @@ const CandidateDashboard = () => {
                 </div>
 
                 {/* SIDEBAR */}
-                <aside className={`${sidebarOpen ? 'flex' : 'hidden'} md:flex flex-col w-full md:w-[240px] shrink-0 md:sticky top-[64px] md:h-[calc(100vh-64px)] overflow-y-auto`} style={{ background: 'var(--pro-surface)', borderRight: '1px solid var(--pro-border)', padding: '28px 16px 20px' }}>
+                <aside className={`${sidebarOpen ? 'flex' : 'hidden'} md:flex jw-dashboard-sidebar`}>
                     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
                         {avatarUrl ? (
                             <img src={avatarUrl} alt="avatar" style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,107,107,0.25)', marginBottom: '12px' }} />

@@ -146,12 +146,11 @@ const EmployerDashboard = () => {
         <Navbar />
       </div>
 
-      <div className="flex flex-col md:flex-row min-h-screen pt-[64px]">
+      <div className="jw-dashboard-layout">
         {/* Mobile Menu Toggle */}
         <div className="jw-dash-mobile-toggle" style={{
             display: 'none', justifyContent: 'space-between', alignItems: 'center',
             padding: '14px 20px', background: 'white', borderBottom: '1px solid #e5e7eb', zIndex: 50,
-            ...(sidebarOpen ? {} : { position: 'sticky', top: '64px' }),
         }}>
           <span className="font-bricolage" style={{ fontWeight: 700, fontSize: '1.05rem', color: '#1f2937' }}>{sidebarOpen ? 'Close Menu' : 'Dashboard Menu'}</span>
           <button onClick={() => setSidebarOpen(!sidebarOpen)} style={{ padding: '8px', color: '#4b5563', background: 'none', border: 'none', cursor: 'pointer', borderRadius: '8px' }}>
@@ -160,7 +159,7 @@ const EmployerDashboard = () => {
         </div>
 
         {/* SIDEBAR */}
-        <aside className={`${sidebarOpen ? 'flex' : 'hidden'} md:flex flex-col w-full md:w-[240px] shrink-0 md:sticky top-[64px] md:h-[calc(100vh-64px)] overflow-y-auto`} style={{ background: 'var(--pro-surface)', borderRight: '1px solid var(--pro-border)', padding: '28px 16px 20px' }}>
+        <aside className={`${sidebarOpen ? 'flex' : 'hidden'} md:flex jw-dashboard-sidebar`}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '20px' }}>
             {avatarUrl ? (
               <img src={avatarUrl} alt="avatar" style={{ width: '72px', height: '72px', borderRadius: '50%', objectFit: 'cover', border: '3px solid rgba(255,107,107,0.25)', marginBottom: '12px' }} />
@@ -357,11 +356,11 @@ const EmployerDashboard = () => {
 
                 <div style={{ marginBottom: '16px' }}>
                   <label className="font-outfit" style={{ display: 'block', fontSize: '0.8rem', fontWeight: 600, color: 'var(--pro-text-main)', marginBottom: '8px' }}>Salary Range</label>
-                  <div className="flex flex-col md:flex-row gap-4">
-                    <input type="text" value={form.min_salary} onChange={e => setForm({ ...form, min_salary: e.target.value })} placeholder="Min (e.g. 80,000)" style={{ ...inputStyle, flex: 1 }} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'} />
-                    <span className="hidden md:flex items-center text-gray-500">-</span>
-                    <input type="text" value={form.max_salary} onChange={e => setForm({ ...form, max_salary: e.target.value })} placeholder="Max (e.g. 120,000)" style={{ ...inputStyle, flex: 1 }} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'} />
-                    <select value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} className="w-full md:w-[100px]" style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}>
+                  <div className="jw-salary-range-row">
+                    <input type="text" className="jw-salary-input" value={form.min_salary} onChange={e => setForm({ ...form, min_salary: e.target.value })} placeholder="Min (e.g. 80,000)" style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'} />
+                    <span className="jw-salary-separator">-</span>
+                    <input type="text" className="jw-salary-input" value={form.max_salary} onChange={e => setForm({ ...form, max_salary: e.target.value })} placeholder="Max (e.g. 120,000)" style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'} />
+                    <select value={form.currency} onChange={e => setForm({ ...form, currency: e.target.value })} className="jw-currency-select" style={inputStyle} onFocus={e => e.target.style.borderColor = 'var(--jw-coral)'} onBlur={e => e.target.style.borderColor = 'rgba(26,11,46,0.1)'}>
                       <option value="USD">USD</option>
                       <option value="EUR">EUR</option>
                       <option value="GBP">GBP</option>

@@ -1,7 +1,6 @@
-@import "tailwindcss";
-
 /* ─── Google Fonts ─── */
 @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss";
 
 :root {
   /* Primary Surfaces */
@@ -787,4 +786,89 @@ button, input, textarea, select {
 input[type='password']::-ms-reveal,
 input[type='password']::-ms-clear {
   display: none;
+}
+
+/* ─── Custom Layout & Fixes for Dashboards ─── */
+.jw-navbar-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  z-index: 60 !important;
+  padding-top: 20px !important;
+  padding-bottom: 20px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+.jw-dashboard-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding-top: 100px;
+}
+
+.jw-dashboard-sidebar {
+  background: var(--pro-surface) !important;
+  border-right: 1px solid var(--pro-border) !important;
+  padding: 28px 16px 20px !important;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.jw-salary-range-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.jw-salary-input {
+  width: 100%;
+}
+
+.jw-salary-separator {
+  display: none;
+}
+
+.jw-currency-select {
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .jw-dashboard-layout {
+    flex-direction: row !important;
+    padding-top: 110px !important;
+  }
+
+  .jw-dashboard-sidebar {
+    width: 240px !important;
+    position: sticky !important;
+    top: 110px !important;
+    height: calc(100vh - 110px) !important;
+    overflow-y: auto !important;
+  }
+
+  .jw-salary-range-row {
+    flex-direction: row !important;
+    align-items: center !important;
+  }
+
+  .jw-salary-input {
+    flex: 1 !important;
+    width: auto !important;
+    min-width: 0 !important;
+  }
+
+  .jw-salary-separator {
+    display: flex !important;
+    align-items: center !important;
+    color: #6b7280 !important;
+  }
+
+  .jw-currency-select {
+    width: 100px !important;
+  }
 }
